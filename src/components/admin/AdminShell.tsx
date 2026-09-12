@@ -1,25 +1,14 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
-import { usePathname } from "next/navigation";
-import Link from "next/link";
 import { Authenticated, AuthLoading, Unauthenticated, useQuery } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { api } from "../../../convex/_generated/api";
 import { cn } from "@/lib/utils";
 import { STUDIO } from "@/lib/routes";
 import { describeError } from "./ui";
+import DeskChrome from "./DeskChrome";
 
-const DESK = [
-  { href: "/admin", label: "Overview", sheet: "X-900" },
-  { href: "/admin/projects", label: "Projects", sheet: "X-910" },
-  { href: "/admin/media", label: "Photographs", sheet: "X-920" },
-  { href: "/admin/reviews", label: "Reviews", sheet: "X-930" },
-  { href: "/admin/monograph", label: "Monograph", sheet: "X-940" },
-  { href: "/admin/walkthrough", label: "Rooms", sheet: "X-950" },
-  { href: "/admin/enquiries", label: "Enquiries", sheet: "X-960" },
-  { href: "/admin/settings", label: "Settings", sheet: "X-970" },
-];
 
 /** The auth library answers in codes; the desk answers in sentences. */
 function signInMessage(error: unknown) {
@@ -265,79 +254,13 @@ function NoAccess({ email }: { email: string }) {
 }
 
 function DeskLayout({ email, children }: { email: string; children: ReactNode }) {
-  const pathname = usePathname();
   const { signOut } = useAuthActions();
   const waiting = useQuery(api.inquiries.waiting);
 
   return (
-    <div className="flex min-h-dvh flex-col lg:flex-row">
-      <aside className="border-b border-rule lg:sticky lg:top-0 lg:h-dvh lg:w-64 lg:shrink-0 lg:border-r lg:border-b-0">
-        <div className="flex h-full flex-col gap-5 px-6 py-6 lg:gap-8 lg:py-7">
-          <div>
-            <Link href="/" className="inked text-lead tracking-[0.28em] uppercase">
-              Iconic
-            </Link>
-            <p className="annotation mt-2 text-on-surface-faint">Studio desk</p>
-          </div>
-
-          <nav
-            aria-label="Studio desk"
-            className="-mx-6 overflow-x-auto px-6 lg:mx-0 lg:flex-1 lg:overflow-visible lg:px-0"
-          >
-            <ul className="flex gap-x-6 whitespace-nowrap lg:flex-col lg:gap-y-1">
-              {DESK.map((item) => {
-                const active = item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href);
-                const badge = item.href === "/admin/enquiries" ? (waiting ?? 0) : 0;
-                return (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      aria-current={active ? "page" : undefined}
-                      className={cn(
-                        "flex min-h-11 items-center gap-3 transition-colors duration-300",
-                        active ? "text-accent" : "text-on-surface-muted hover:text-on-surface",
-                      )}
-                    >
-                      <span className="annotation hidden w-11 shrink-0 opacity-60 lg:inline">{item.sheet}</span>
-                      <span className="condensed text-label tracking-wide uppercase">{item.label}</span>
-                      {badge > 0 && (
-                        <span className="annotation min-w-6 bg-accent px-1.5 py-0.5 text-center text-night tabular-nums">
-                          {badge}
-                          <span className="sr-only"> waiting</span>
-                        </span>
-                      )}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </nav>
-
-          <div className="flex flex-wrap items-center gap-x-6 border-t border-rule pt-4 lg:flex-col lg:items-start lg:gap-2 lg:pt-5">
-            <p className="annotation w-full truncate text-on-surface-faint" title={email}>
-              {email}
-            </p>
-            <Link
-              href="/"
-              target="_blank"
-              rel="noreferrer"
-              className="annotation flex min-h-11 items-center text-on-surface-faint transition-colors hover:text-on-surface"
-            >
-              View the site
-            </Link>
-            <button
-              type="button"
-              onClick={() => void signOut()}
-              className="annotation flex min-h-11 cursor-pointer items-center text-on-surface-faint transition-colors hover:text-accent"
-            >
-              Sign out
-            </button>
-          </div>
-        </div>
-      </aside>
-
-      <div className="min-w-0 flex-1 px-6 py-10 lg:px-12 lg:py-14">{children}</div>
-    </div>
+    <DeskChrome email={email} waiting={waiting ?? 0} onSignOut={() => void signOut()}>
+      {children}
+    </DeskChrome>
   );
 }
 

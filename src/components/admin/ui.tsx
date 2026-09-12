@@ -28,7 +28,7 @@ export function DeskHeader({
 }
 
 export const inputClass =
-  "min-h-11 w-full border border-rule bg-surface-raised px-3 py-2.5 text-sm outline-none transition-colors focus:border-accent";
+  "min-h-11 w-full min-w-0 border border-rule bg-surface-raised px-3 py-2.5 text-sm outline-none transition-colors focus:border-accent";
 
 export function Field({
   label,

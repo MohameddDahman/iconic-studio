@@ -384,7 +384,7 @@ export default function ProjectsDesk() {
                 <legend className="annotation mb-3 text-on-surface-faint">Facts</legend>
                 <div className="flex flex-col gap-2">
                   {draft.facts.map((fact, i) => (
-                    <div key={i} className="grid grid-cols-[1fr_1fr_auto] gap-2">
+                    <div key={i} className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] gap-2">
                       <input
                         aria-label={`Fact ${i + 1} label`}
                         className={inputClass}
@@ -475,7 +475,7 @@ export default function ProjectsDesk() {
                 Gallery — {draft.galleryIds.length} {draft.galleryIds.length === 1 ? "photograph" : "photographs"}
               </p>
               {draft.galleryIds.length > 0 ? (
-                <ol className="grid grid-cols-3 gap-2">
+                <ol className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                   {draft.galleryIds.map((id, i) => {
                     const photo = photos.get(id);
                     return (
