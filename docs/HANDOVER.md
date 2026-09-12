@@ -86,7 +86,7 @@ It is built to stay light: it renders only when the scroll position or the lamp 
 
 `/admin`, backed by Convex. Nothing on it is public.
 
-- **Accounts.** Only the addresses in `ADMIN_EMAILS` can use it. The first time, each person chooses **Set up your account** and picks a password of at least 10 characters; after that they sign in. The list is checked on every request, so removing an address locks that person out at once, even mid-session.
+- **Accounts.** The desk only signs people in; there is no sign-up on the site. Each account is made with `node scripts/create-desk-account.mjs`, which asks for the password at the prompt so it is never typed into a public page, passed as an argument or kept in this repository. Only addresses in `ADMIN_EMAILS` can have one, the list is checked on every request, and removing an address locks that person out at once, even mid-session.
 - **Overview** shows what each public section is running on — the studio's own records ("Live") or still the seed content — what needs attention (photographs without a description; published projects, spreads or rooms missing the photograph they need), and the latest enquiries.
 - **Photographs** is the library everything draws from: search, filters, where each photograph is used, and its **evening version** — the same view rendered after dark, which gives the photograph its lamp switch wherever it appears. Deleting a photograph takes it out of every project, spread and room first.
 - **Projects, Reviews, Monograph and Rooms** edit what their pages show, in order. A published project needs at least one photograph, a spread its plate and a room its photograph; until then each stays off the site, and the desk says so.
@@ -109,7 +109,13 @@ Both carry their own sign-in keys (`JWT_PRIVATE_KEY`, `JWKS`) and their own `ADM
 CONVEX_DEPLOYMENT=prod:whimsical-donkey-415 npx convex env set ADMIN_EMAILS "ahmed@…,studio@…"
 ```
 
-Each person then opens <https://iconic-studio-six.vercel.app/admin> once, chooses **Set up your account**, and picks their own password of at least 10 characters.
+Then make each person an account, with them at the keyboard for the password:
+
+```bash
+node scripts/create-desk-account.mjs --prod
+```
+
+After that they sign in at <https://iconic-studio-six.vercel.app/admin> with that address and password.
 
 ## 7. Before launch
 
@@ -119,7 +125,7 @@ Each person then opens <https://iconic-studio-six.vercel.app/admin> once, choose
 - [ ] Confirm project titles, descriptions and the services copy
 - [ ] Real email, phone and studio address in `/admin` → Settings
 - [ ] Add the studio's domain in Vercel, set `NEXT_PUBLIC_SITE_URL` there and `SITE_URL` on production Convex to match, and add an OG image
-- [ ] `ADMIN_EMAILS` with the studio's addresses on the production deployment; each person then opens `/admin` once and chooses **Set up your account**
+- [ ] `ADMIN_EMAILS` with the studio's addresses on the production deployment, then `node scripts/create-desk-account.mjs --prod` for each person
 - [ ] Run `node scripts/scroll-test.mjs` and `npm run build`
 
 ## 8. Getting the content in
@@ -138,7 +144,7 @@ Without `--replace` the import stops rather than writing over rows that already 
 
 - **Where it is deployed.** The site is on Vercel (project `iconic-studio`, <https://iconic-studio-six.vercel.app>), built from <https://github.com/MohameddDahman/iconic-studio>. `npx vercel deploy --prod` publishes again from this folder.
 - **The signed-in desk has not had a first run yet.** The functions are deployed to the dev deployment and the public side answers, but saving, uploading and deleting need a signed-in account, which only a person can set up. After setting the password, add a test project with a photograph, give a photograph an evening version, and delete both.
-- **Password resets go through the developer.** There is no email provider, so for a forgotten password delete that person's row in `authAccounts` in the Convex dashboard; they then set the account up again at `/admin`.
+- **Password resets go through the developer.** There is no email provider, so for a forgotten password delete that person's row in `authAccounts` in the Convex dashboard, then run `node scripts/create-desk-account.mjs` for them again.
 - **The seed content's evening pairs stay in code.** Photographs uploaded at `/admin` get their evening version there; the seed set's pairs are still declared in `src/lib/seed.ts`.
 - **Weight.** The film frames total about 21 MB on disk, but a visitor downloads one walkthrough set — 9.1 MB on a computer, 5.3 MB on a phone — plus 6.7 MB for the two build clips, and only every second frame when the browser asks to save data or the connection is slow. The 3D assets are about 13 MB (including a 1.6 MB lighting HDRI). Both load only when their section comes near, and the films load coarse frames first.
 - **No test suite** beyond type-checking, linting, `scripts/scroll-test.mjs` and the screenshot scripts.

@@ -21,25 +21,16 @@ const DESK = [
   { href: "/admin/settings", label: "Settings", sheet: "X-970" },
 ];
 
-/** Must match the rule on the Convex deployment, in convex/auth.ts. */
-const MIN_PASSWORD = 10;
-
-type Flow = "signIn" | "signUp";
-
 /** The auth library answers in codes; the desk answers in sentences. */
-function signInMessage(error: unknown, flow: Flow) {
+function signInMessage(error: unknown) {
   const text = describeError(error);
-  if (/InvalidAccountId/.test(text)) {
-    return "There is no account for that address yet. Choose “Set up your account” to create one.";
+  // Whether the address exists is not something a sign-in page should reveal.
+  if (/InvalidAccountId|InvalidSecret/.test(text)) {
+    return "That address and password do not match an account.";
   }
-  if (/InvalidSecret/.test(text)) return "That password is not right.";
   if (/TooManyFailedAttempts/.test(text)) return "Too many attempts. Wait a few minutes and try again.";
-  if (/already exists/.test(text)) return "That address already has an account. Sign in instead.";
-  if (/Invalid password/.test(text)) return `Use at least ${MIN_PASSWORD} characters for the password.`;
-  if (/does not have access|No studio accounts|at least \d+ characters/.test(text)) return text;
-  return flow === "signUp"
-    ? "The account could not be set up. Check the address and try again."
-    : "Those details were not accepted. Check the address and password.";
+  if (/does not have access|No studio accounts/.test(text)) return text;
+  return "Those details were not accepted. Check the address and password.";
 }
 
 const fieldClass =
@@ -48,12 +39,11 @@ const fieldClass =
 const bigButtonClass =
   "min-h-12 cursor-pointer border border-rule-strong px-8 py-4 transition-colors hover:border-accent hover:text-accent disabled:cursor-wait disabled:opacity-50";
 
+/** Sign in only. Accounts are made with scripts/create-desk-account.mjs. */
 function SignIn() {
   const { signIn } = useAuthActions();
-  const [flow, setFlow] = useState<Flow>("signIn");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const settingUp = flow === "signUp";
 
   return (
     <div className="sheet flex min-h-dvh items-center justify-center py-24">
@@ -61,48 +51,21 @@ function SignIn() {
         <p className="annotation mb-6 text-accent">X-900 — Studio desk</p>
         <h1 className="inked text-d2 leading-[0.94] font-light">{STUDIO.name}</h1>
         <p className="mt-4 text-on-surface-muted">
-          {settingUp
-            ? "Choose a password for your studio address. You only do this once."
-            : "Sign in to add projects, upload photographs and answer enquiries."}
+          Sign in to add projects, upload photographs and answer enquiries.
         </p>
 
-        <div className="mt-10 grid grid-cols-2 border border-rule">
-          {(["signIn", "signUp"] as const).map((option) => (
-            <button
-              key={option}
-              type="button"
-              aria-pressed={flow === option}
-              onClick={() => {
-                setFlow(option);
-                setError(null);
-              }}
-              className={cn(
-                "condensed min-h-11 cursor-pointer px-3 text-label tracking-[0.14em] uppercase transition-colors duration-300",
-                flow === option ? "bg-accent/15 text-accent" : "text-on-surface-muted hover:text-on-surface",
-              )}
-            >
-              {option === "signIn" ? "Sign in" : "Set up your account"}
-            </button>
-          ))}
-        </div>
-
         <form
-          className="mt-8 flex flex-col gap-6"
+          className="mt-10 flex flex-col gap-6"
           onSubmit={async (e) => {
             e.preventDefault();
             const data = new FormData(e.currentTarget);
-            if (settingUp && data.get("password") !== data.get("confirm")) {
-              setError("The two passwords are not the same.");
-              return;
-            }
-            data.delete("confirm");
-            data.set("flow", flow);
+            data.set("flow", "signIn");
             setBusy(true);
             setError(null);
             try {
               await signIn("password", data);
             } catch (err) {
-              setError(signInMessage(err, flow));
+              setError(signInMessage(err));
             } finally {
               setBusy(false);
             }
@@ -125,36 +88,25 @@ function SignIn() {
               name="password"
               type="password"
               required
-              minLength={settingUp ? MIN_PASSWORD : undefined}
-              autoComplete={settingUp ? "new-password" : "current-password"}
+              autoComplete="current-password"
               className={fieldClass}
             />
-            {settingUp && (
-              <span className="text-xs text-on-surface-faint">At least {MIN_PASSWORD} characters.</span>
-            )}
           </label>
-
-          {settingUp && (
-            <label className="flex flex-col gap-2">
-              <span className="annotation text-on-surface-faint">Password again</span>
-              <input name="confirm" type="password" required autoComplete="new-password" className={fieldClass} />
-            </label>
-          )}
 
           <button type="submit" disabled={busy} className={cn("mt-2", bigButtonClass)}>
             <span className="condensed text-label tracking-[0.18em] uppercase">
-              {busy ? "Checking" : settingUp ? "Create the account" : "Sign in"}
+              {busy ? "Checking" : "Sign in"}
             </span>
           </button>
         </form>
 
         <div className="mt-10 space-y-3 border-t border-rule pt-6 text-sm text-on-surface-faint">
           <p>
-            Only the addresses listed in <code className="text-accent">ADMIN_EMAILS</code> on the Convex
-            deployment can set up an account — there is no public sign-up — and taking an address off the list
-            locks it out straight away.
+            There is no sign-up. Accounts are made by the developer, for the addresses listed in{" "}
+            <code className="text-accent">ADMIN_EMAILS</code> on the Convex deployment — and taking an address
+            off that list locks it out straight away.
           </p>
-          <p>Forgotten the password? Ask the developer to clear the account, then set it up again.</p>
+          <p>Need an account, or forgotten the password? Ask the developer.</p>
         </div>
       </div>
     </div>

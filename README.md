@@ -34,7 +34,14 @@ The dev deployment already has the sign-in keys (`JWT_PRIVATE_KEY`, `JWKS`), `SI
 npx convex env set ADMIN_EMAILS "ahmed@example.com,studio@example.com"
 ```
 
-Open `/admin`. The first time, choose **Set up your account** with an allowed address and a password of at least 10 characters; after that, sign in. Removing an address from `ADMIN_EMAILS` locks it out immediately.
+`/admin` only signs people in — there is no sign-up on the site, so nobody who finds the page can claim an address. Accounts are made from here, and the person types their own password at the prompt:
+
+```bash
+node scripts/create-desk-account.mjs            # the dev deployment
+node scripts/create-desk-account.mjs --prod     # the live site
+```
+
+The address has to be in `ADMIN_EMAILS` already; anything else is refused before a row is written. Taking an address off the list locks it out immediately, even mid-session.
 
 The production deployment is `whimsical-donkey-415`, with its own keys, `ADMIN_EMAILS` and `SITE_URL`. To push the functions to it:
 
@@ -92,6 +99,7 @@ Public pages are server-rendered from Convex over HTTP and revalidate every 60 s
 | `npm run build` | Production build (type-checks as it goes) |
 | `node scripts/build-media-manifest.mjs` | Reads every image under `public/media` (subfolders included), records intrinsic sizes and bakes blur placeholders into `src/lib/media-manifest.json`. Run after adding images. |
 | `node scripts/scroll-test.mjs [base] [routes…]` | Wheel-scroll test: each notch must move the page exactly one notch, with no height changes and no drift |
+| `node scripts/create-desk-account.mjs [--prod]` | Makes a studio desk account for an allowed address, asking for the password at the prompt. The site has no sign-up. |
 | `node scripts/import-seed.mjs [--prod] [--replace]` | Uploads the bundled photographs to Convex and rebuilds the seed projects, rooms, spreads, reviews and settings there, so the studio desk can edit them |
 | `node scripts/extract-film-frames.mjs <video> <out> [--fps] [--every] [--width] [--end] [--crop] [--portrait]` | Turns a video into a silent WebP frame sequence for the scroll films (decoded by Edge, no ffmpeg needed) |
 | `node scripts/shots.mjs [--mobile] [--full]` | Screenshots every route into `.shots/` |
