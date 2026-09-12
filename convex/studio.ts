@@ -1,6 +1,6 @@
 import { query } from "./_generated/server";
 import { auth } from "./auth";
-import { isStudioEmail } from "./access";
+import { isStudioEmail, studioEmails } from "./access";
 import { requireStudio } from "./lib";
 
 /**
@@ -14,6 +14,25 @@ export const viewer = query({
     if (!userId) return null;
     const user = await ctx.db.get(userId);
     return { email: user?.email ?? "", allowed: isStudioEmail(user?.email) };
+  },
+});
+
+/**
+ * Whether the desk still has no account at all. While that is true — and only
+ * then — /admin offers to set the first password, because there is otherwise no
+ * way in. The moment an account exists this turns false for good and the page
+ * is sign-in only. The address is returned so the first run can fill it in:
+ * it is already the one thing ADMIN_EMAILS makes public to anyone who tries.
+ */
+export const firstRun = query({
+  args: {},
+  handler: async (ctx) => {
+    const allowed = studioEmails();
+    const existing = await ctx.db.query("users").take(1);
+    return {
+      needed: existing.length === 0 && allowed.length > 0,
+      email: allowed.length === 1 ? allowed[0] : "",
+    };
   },
 });
 
