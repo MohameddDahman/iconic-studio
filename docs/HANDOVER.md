@@ -94,7 +94,22 @@ It is built to stay light: it renders only when the scroll position or the lamp 
 
 Every save reports whether it worked, and the editors ask before discarding unsaved changes.
 
-**Where it runs.** Convex project `iconic-studio` in Ahmed Fawzy's team. The dev deployment is `brave-toucan-31`; its URLs are in `.env.local`. It has the sign-in keys (`JWT_PRIVATE_KEY`, `JWKS`), `SITE_URL` (`http://localhost:3000`) and `ADMIN_EMAILS`, which for now allows one login address, `desk@iconic-studio.local` — replace it with the studio's addresses. For the live site, run `npx convex deploy` and set the same four variables on the production deployment, with fresh keys and `SITE_URL` as the real domain.
+**Where it runs.** Convex project `iconic-studio` in Ahmed Fawzy's team, with two deployments:
+
+| | Deployment | `SITE_URL` |
+|---|---|---|
+| Live site | `whimsical-donkey-415` (production) | `https://iconic-studio-six.vercel.app` |
+| Local | `brave-toucan-31` (dev, URLs in `.env.local`) | `http://localhost:3000` |
+
+Both carry their own sign-in keys (`JWT_PRIVATE_KEY`, `JWKS`) and their own `ADMIN_EMAILS`, and both hold the full content — the import was run against each.
+
+**Nobody has an account yet.** Creating one means choosing a password, which only a person can do. `ADMIN_EMAILS` currently allows a single placeholder address, `desk@iconic-studio.local`, so the desk can be opened once and looked at; replace it with the studio's real addresses:
+
+```bash
+CONVEX_DEPLOYMENT=prod:whimsical-donkey-415 npx convex env set ADMIN_EMAILS "ahmed@…,studio@…"
+```
+
+Each person then opens <https://iconic-studio-six.vercel.app/admin> once, chooses **Set up your account**, and picks their own password of at least 10 characters.
 
 ## 7. Before launch
 
@@ -103,9 +118,8 @@ Every save reports whether it worked, and the editors ask before discarding unsa
 - [ ] Confirm the Vecteezy licence, and the rights to the two Instagram clips (or replace them)
 - [ ] Confirm project titles, descriptions and the services copy
 - [ ] Real email, phone and studio address in `/admin` → Settings
-- [ ] Point `metadataBase` in `src/app/layout.tsx` at the real domain and add an OG image
-- [ ] `npx convex env set ADMIN_EMAILS "…"` with the studio's addresses; each person then opens `/admin` once and chooses **Set up your account**
-- [ ] `npx convex deploy`, then set `ADMIN_EMAILS`, `JWT_PRIVATE_KEY`, `JWKS` and `SITE_URL` on the production deployment
+- [ ] Add the studio's domain in Vercel, set `NEXT_PUBLIC_SITE_URL` there and `SITE_URL` on production Convex to match, and add an OG image
+- [ ] `ADMIN_EMAILS` with the studio's addresses on the production deployment; each person then opens `/admin` once and chooses **Set up your account**
 - [ ] Run `node scripts/scroll-test.mjs` and `npm run build`
 
 ## 8. Getting the content in
@@ -122,7 +136,7 @@ Without `--replace` the import stops rather than writing over rows that already 
 
 ## 9. Known limitations
 
-- **`convex/_generated/` is hand-written.** Convex codegen needs an interactive login. The first `npx convex dev` replaces these files with the real ones.
+- **Where it is deployed.** The site is on Vercel (project `iconic-studio`, <https://iconic-studio-six.vercel.app>), built from <https://github.com/MohameddDahman/iconic-studio>. `npx vercel deploy --prod` publishes again from this folder.
 - **The signed-in desk has not had a first run yet.** The functions are deployed to the dev deployment and the public side answers, but saving, uploading and deleting need a signed-in account, which only a person can set up. After setting the password, add a test project with a photograph, give a photograph an evening version, and delete both.
 - **Password resets go through the developer.** There is no email provider, so for a forgotten password delete that person's row in `authAccounts` in the Convex dashboard; they then set the account up again at `/admin`.
 - **The seed content's evening pairs stay in code.** Photographs uploaded at `/admin` get their evening version there; the seed set's pairs are still declared in `src/lib/seed.ts`.

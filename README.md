@@ -36,7 +36,27 @@ npx convex env set ADMIN_EMAILS "ahmed@example.com,studio@example.com"
 
 Open `/admin`. The first time, choose **Set up your account** with an allowed address and a password of at least 10 characters; after that, sign in. Removing an address from `ADMIN_EMAILS` locks it out immediately.
 
-For production, `npx convex deploy`, then set the same four variables on the production deployment — new keys, and `SITE_URL` as the live domain.
+The production deployment is `whimsical-donkey-415`, with its own keys, `ADMIN_EMAILS` and `SITE_URL`. To push the functions to it:
+
+```bash
+CONVEX_DEPLOYMENT=prod:whimsical-donkey-415 npx convex deploy
+```
+
+## Where it is deployed
+
+| | |
+|---|---|
+| Repository | <https://github.com/MohameddDahman/iconic-studio> (private) |
+| Site | <https://iconic-studio-six.vercel.app> — Vercel project `iconic-studio` |
+| Backend | Convex `whimsical-donkey-415` (production) and `brave-toucan-31` (dev) |
+
+Vercel holds `NEXT_PUBLIC_CONVEX_URL` and `NEXT_PUBLIC_CONVEX_SITE_URL` on all three environments; the pages are built against production Convex. Deploy again with:
+
+```bash
+npx vercel deploy --prod
+```
+
+When the studio has its own domain: add it in Vercel, set `NEXT_PUBLIC_SITE_URL` there (it is what `metadataBase` uses for canonical and social URLs), and set `SITE_URL` on the production Convex deployment to match.
 
 ## How the content works
 

@@ -8,7 +8,7 @@ const description =
   "Iconic is an interior design practice in Cairo that also builds what it draws — apartments and villas taken from the empty shell through drawings, joinery, lighting and site to finished rooms.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://iconic.design"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://iconic-studio-six.vercel.app"),
   title: {
     default: `${STUDIO.name} — ${STUDIO.tagline}`,
     template: `%s — ${STUDIO.name}`,
