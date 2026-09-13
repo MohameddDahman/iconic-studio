@@ -118,6 +118,9 @@ export default defineSchema({
     address: v.array(v.string()),
     instagram: v.string(),
     instagramUrl: v.string(),
+    whatsapp: v.optional(v.string()),
+    mapUrl: v.optional(v.string()),
+    links: v.optional(v.array(v.object({ label: v.string(), url: v.string() }))),
   }),
 
   inquiries: defineTable({

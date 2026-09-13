@@ -350,7 +350,7 @@ export default function TransitionProvider({ children }: { children: ReactNode }
             <span className="relative h-px flex-1 overflow-hidden bg-white/10">
               <span ref={progressRef} className="absolute inset-0 origin-left scale-x-0 bg-glow" />
             </span>
-            <span className="annotation text-bone/50">Cairo</span>
+            <span className="annotation text-bone/50">Alexandria</span>
           </div>
         </div>
       </div>

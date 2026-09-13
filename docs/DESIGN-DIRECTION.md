@@ -1,6 +1,6 @@
 # Iconic — Design Direction (v3)
 
-**Iconic Architecture Design** — interior design, decor and execution, Cairo.
+**Iconic Architecture Design** — interior design, decor and execution, Alexandria.
 Principal: Eng. Ahmed Fawzy. Instagram: `iconic_architecture_design`.
 
 The studio designs every kind of interior — apartments, villas, penthouses,

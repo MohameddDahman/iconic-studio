@@ -74,7 +74,7 @@ export default async function HomePage() {
     <>
       <HeroCinema
         slides={slides}
-        lead="An interior design and execution studio in Cairo — homes, workplaces, restaurants, hotels and clinics, from the first sketch to the final styling."
+        lead="An interior design and execution studio in Alexandria — homes, workplaces, restaurants, hotels and clinics, from the first sketch to the final styling."
       />
       <IntroStatement
         statement="We design interiors where the light, the materials and the way you move through a room all agree — then our own team builds them, so the room you approved is exactly the room you walk into."

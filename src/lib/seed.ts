@@ -22,11 +22,24 @@ export const SEED_SETTINGS: StudioSettings = {
   tagline: "Interiors, decor & execution",
   intro:
     "Iconic is an interior design and execution studio. We design homes, workplaces, restaurants, hotels and clinics — then build them with our own site team, so the finished room is the room that was drawn.",
-  email: "studio@iconicdesign.eg",
-  phone: "+20 100 000 0000",
-  address: ["Iconic Architecture Design", "Studio address line one", "Cairo, Egypt"],
+  email: "",
+  phone: "+20 155 913 0844",
+  whatsapp: "+20 155 913 0844",
+  address: [
+    "Iconic Architecture Design",
+    "Baron Building, 669 El Horreya Road",
+    "Gianaclis, Abu Qir — next to the church",
+    "Alexandria 21523, Egypt",
+  ],
   instagram: "iconic_architecture_design",
-  instagramUrl: "https://instagram.com/iconic_architecture_design",
+  instagramUrl: "https://www.instagram.com/iconic_architecture_design",
+  mapUrl: "https://maps.app.goo.gl/812AAohLGn5jcmRP8",
+  links: [
+    { label: "Facebook", url: "https://www.facebook.com/Iconic-architecture-design-320706782024246" },
+    { label: "Behance", url: "https://www.behance.net/iconic_arcb479" },
+    { label: "LinkedIn", url: "https://www.linkedin.com/in/iconic-architecture-design-990322403" },
+    { label: "Review us on Google", url: "https://g.page/r/CfWrGa57-KN0EBM/review" },
+  ],
 };
 
 export const SEED_PROJECTS: Project[] = [

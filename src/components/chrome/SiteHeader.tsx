@@ -184,7 +184,7 @@ export default function SiteHeader() {
                 Iconic
               </span>
               <span className="eyebrow mt-1.5 hidden text-[0.5rem] tracking-[0.34em] whitespace-nowrap text-on-surface-faint sm:block">
-                Interiors · Cairo
+                Interiors · Alexandria
               </span>
             </span>
           </TransitionLink>

@@ -8,7 +8,7 @@ import {
   SEED_TESTIMONIALS,
   SEED_THRESHOLDS,
 } from "./seed";
-import type { Media, Project, Spread, StudioSettings, Testimonial, Threshold } from "./types";
+import type { Media, Project, Spread, StudioLink, StudioSettings, Testimonial, Threshold } from "./types";
 
 /**
  * The public site reads from Convex on the server, so pages arrive complete
@@ -196,8 +196,11 @@ export async function getSettings(): Promise<StudioSettings> {
     intro: String(r.intro),
     email: String(r.email),
     phone: String(r.phone),
+    whatsapp: String(r.whatsapp ?? ""),
     address: (r.address ?? []) as string[],
     instagram: String(r.instagram),
     instagramUrl: String(r.instagramUrl),
+    mapUrl: String(r.mapUrl ?? ""),
+    links: (r.links ?? []) as StudioLink[],
   };
 }

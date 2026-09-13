@@ -177,7 +177,7 @@ function CoverSheet({ studio, years }: { studio: string; years: string }) {
             Interiors{years ? ` · ${years}` : ""}
           </p>
         </div>
-        <p className={cn("annotation text-bone/45", T.micro)}>{STUDIO.legalName} · Cairo</p>
+        <p className={cn("annotation text-bone/45", T.micro)}>{STUDIO.legalName} · Alexandria</p>
       </div>
     </Board>
   );
@@ -400,7 +400,7 @@ function GridSheet({ page, side, eager }: { page: Of<"grid">; side: Side; eager:
 
 function ColophonSheet({ page, side, years }: { page: Of<"colophon">; side: Side; years: string }) {
   const rows = [
-    ["Published by", `${STUDIO.legalName}, Cairo`],
+    ["Published by", `${STUDIO.legalName}, Alexandria`],
     ["Photography", "The studio's own renders and site photographs"],
     ["Typefaces", "Fraunces, Archivo, IBM Plex"],
     ["Edition", `Volume I — Interiors${years ? `, ${years}` : ""}`],

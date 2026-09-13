@@ -15,7 +15,7 @@ Read this before the site is shown publicly.
 | **"Shell to styled" clips** | `public/film/bedroom`, `public/film/living` | Downloaded from Instagram (SnapInsta). **The rights to these belong to their creators — get permission or replace them with the studio's own clips before launch.** The living-room clip ended on a promotional caption ("Comment AI RENDER…"); the sequence stops at 5.15 s so it is never shown. |
 | **3D house** | `public/house/` | Poly Haven models, textures and HDRI, CC0 (no attribution required). Listed in `public/house/CREDITS.json`. |
 
-Every film on the site is a silent WebP frame sequence — there is no audio anywhere. The walkthrough uses every second frame of its 60 fps source (238 frames at 1600 × 900, plus a 720 × 1280 set for phones). The two build clips use every frame of their 30 fps sources: the bedroom 212 frames at 540 × 960, and the living room 153 frames at 640 × 458, with the clip's thin black border cropped off.
+Every film on the site is a silent WebP frame sequence — there is no audio anywhere. The walkthrough uses every second frame of its 60 fps source (238 frames at 1600 × 900, plus a 720 × 1280 set for phones). The two build clips use every frame of their 30 fps sources: the bedroom 212 frames at 540 × 960, and the living room 153 frames at 628 × 446, with the clip's black border — and the dark corner it left behind — cropped off.
 
 To replace a film with the studio's own:
 
@@ -49,7 +49,7 @@ The four real projects — Modern Boho Residence, Warm Minimal Guest Bath, Stone
 | Walkthrough room notes | `SEED_THRESHOLDS` | Illustrative — they describe the rooms of the 3D house |
 | Home page figures | `src/app/(site)/page.tsx` | Counted from the content (projects, disciplines, sectors, reviews), so they stay true as content changes |
 | Services and FAQ copy | `src/lib/practice.ts`, `src/app/(site)/services/page.tsx` | General, no prices or promises — confirm the wording |
-| Email, phone, address | `SEED_SETTINGS` / `/admin` → Settings | Placeholders |
+| Phone, WhatsApp, address, map and links | `/admin` → Settings | Real — from the studio's Linktree and its Google Maps listing. There is no public email yet: add one in Settings and it appears on the contact page and in the footer |
 
 The five reviews are real Facebook recommendations (English verbatim; Arabic shown as written with an English rendering the studio should check).
 
@@ -90,7 +90,7 @@ It is built to stay light: it renders only when the scroll position or the lamp 
 - **Overview** shows what each public section is running on — the studio's own records ("Live") or still the seed content — what needs attention (photographs without a description; published projects, spreads or rooms missing the photograph they need), and the latest enquiries.
 - **Photographs** is the library everything draws from: search, filters, where each photograph is used, and its **evening version** — the same view rendered after dark, which gives the photograph its lamp switch wherever it appears. Deleting a photograph takes it out of every project, spread and room first.
 - **Projects, Reviews, Monograph and Rooms** edit what their pages show, in order. A published project needs at least one photograph, a spread its plate and a room its photograph; until then each stays off the site, and the desk says so.
-- **Enquiries** collects the contact form, with waiting and answered views and a reply-by-email link. **Settings** holds the studio's name, contact details and Instagram.
+- **Enquiries** keeps what was sent through the contact form while the site had one; the site no longer has a form. **Settings** holds the studio's name, phone, WhatsApp number, address, Google Maps link, Instagram and its other links (Facebook, Behance, LinkedIn, Google reviews). The contact page's map pins the place the Google Maps link points to.
 
 Every save reports whether it worked, and the editors ask before discarding unsaved changes.
 
@@ -123,7 +123,7 @@ After that they sign in at <https://iconic-studio-six.vercel.app/admin> with tha
 - [ ] Get original exports of the studio's renders and upload them at `/admin`
 - [ ] Confirm the Vecteezy licence, and the rights to the two Instagram clips (or replace them)
 - [ ] Confirm project titles, descriptions and the services copy
-- [ ] Real email, phone and studio address in `/admin` → Settings
+- [x] Real phone, WhatsApp, address, map and links in `/admin` → Settings — add an email there if the studio wants one on the site
 - [ ] Add the studio's domain in Vercel, set `NEXT_PUBLIC_SITE_URL` there and `SITE_URL` on production Convex to match, and add an OG image
 - [ ] `ADMIN_EMAILS` with the studio's addresses on the production deployment, then `node scripts/create-desk-account.mjs --prod` for each person
 - [ ] Run `node scripts/scroll-test.mjs` and `npm run build`

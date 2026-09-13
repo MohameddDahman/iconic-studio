@@ -1,6 +1,6 @@
 # Iconic — studio site
 
-Portfolio and studio CMS for **Iconic Architecture Design**, an interior design, decor and execution studio in Cairo.
+Portfolio and studio CMS for **Iconic Architecture Design**, an interior design, decor and execution studio in Alexandria.
 
 Next.js 16 (App Router, Turbopack) · React 19 · Tailwind v4 · Convex · GSAP · three.js
 
@@ -89,7 +89,7 @@ Public pages are server-rendered from Convex over HTTP and revalidate every 60 s
 | `/services` | Every discipline in full, process, questions |
 | `/inside` | The house: a 3D model that becomes its plan and then its materials, a walkthrough film and two rooms that build themselves — each playing as its section scrolls past — then every room by day and after dark |
 | `/monograph` | The work as a book with page-turn animation |
-| `/studio`, `/contact` | The studio, principles, process, reviews, credits; enquiry form |
+| `/studio`, `/contact` | The studio, principles, process, reviews, credits; phone, WhatsApp, address with a map, and every link the studio keeps online |
 
 ## Scripts
 

@@ -118,13 +118,25 @@ export interface Spread {
   projectSlug?: string;
 }
 
+export interface StudioLink {
+  label: string;
+  url: string;
+}
+
 export interface StudioSettings {
   name: string;
   tagline: string;
   intro: string;
+  /** Empty when the studio has no public address; the site then leaves it out. */
   email: string;
   phone: string;
+  /** The number WhatsApp opens, in full international form. */
+  whatsapp: string;
   address: string[];
   instagram: string;
   instagramUrl: string;
+  /** A Google Maps link to the studio. */
+  mapUrl: string;
+  /** Everywhere else the studio is online, in the order shown. */
+  links: StudioLink[];
 }
