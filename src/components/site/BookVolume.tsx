@@ -18,7 +18,7 @@ import TransitionLink from "@/components/motion/TransitionLink";
 import { gsap, ScrollTrigger, prefersReducedMotion } from "@/lib/gsap";
 import { STUDIO } from "@/lib/routes";
 import { cn } from "@/lib/utils";
-import type { BookPage } from "@/lib/book";
+import { yearsOf, type BookPage } from "@/lib/book";
 import type { Media } from "@/lib/types";
 
 /**
@@ -104,7 +104,7 @@ function Board({ children, className }: { children: ReactNode; className?: strin
     <div className={cn("@container relative h-full w-full overflow-hidden bg-night text-bone", className)}>
       <span
         aria-hidden="true"
-        className="absolute inset-0 bg-[radial-gradient(90%_60%_at_50%_0%,rgba(224,177,114,0.2),transparent_70%)]"
+        className="book-glow absolute inset-0 bg-[radial-gradient(90%_60%_at_50%_0%,rgba(224,177,114,0.2),transparent_70%)]"
       />
       <span aria-hidden="true" className="absolute inset-[5cqw] border border-bone/10" />
       {children}
@@ -340,11 +340,11 @@ function PlateSheet({ page, eager }: { page: Of<"plate">; eager: boolean }) {
       />
       <span
         aria-hidden="true"
-        className="absolute inset-x-0 bottom-0 h-[26%] bg-gradient-to-t from-night/70 to-transparent"
+        className="book-shade absolute inset-x-0 bottom-0 h-[26%] bg-gradient-to-t from-night/70 to-transparent"
       />
       <div
         className={cn(
-          "absolute inset-x-[5.5cqw] bottom-[4.5cqw] z-20 flex items-end justify-between gap-[3cqw] text-bone",
+          "book-caption absolute inset-x-[5.5cqw] bottom-[4.5cqw] z-20 flex items-end justify-between gap-[3cqw] text-bone",
           page.side === "left" && "flex-row-reverse",
         )}
       >
@@ -402,7 +402,7 @@ function ColophonSheet({ page, side, years }: { page: Of<"colophon">; side: Side
   const rows = [
     ["Published by", `${STUDIO.legalName}, Alexandria`],
     ["Photography", "The studio's own renders and site photographs"],
-    ["Typefaces", "Fraunces, Archivo, IBM Plex"],
+    ["Typefaces", "Instrument Serif, Mona Sans, Geist Mono"],
     ["Edition", `Volume I — Interiors${years ? `, ${years}` : ""}`],
   ];
   return (
@@ -446,7 +446,8 @@ function EndpaperSheet({ page, side, studio }: { page: Of<"endpaper">; side: Sid
   );
 }
 
-function SheetContent({
+/** One page of the volume, whatever its kind. The PDF copy is printed from these too. */
+export function SheetContent({
   page,
   side,
   eager,
@@ -601,13 +602,7 @@ export default function BookVolume({ pages, studio }: { pages: BookPage[]; studi
     });
   }, [isClient, pages]);
 
-  const years = useMemo(() => {
-    const all = pages.flatMap((p) => (p.kind === "opener" && p.project ? [p.project.year] : []));
-    if (all.length === 0) return "";
-    const lo = Math.min(...all);
-    const hi = Math.max(...all);
-    return lo === hi ? String(lo) : `${lo} — ${hi}`;
-  }, [pages]);
+  const years = useMemo(() => yearsOf(pages), [pages]);
 
   /** One entry per spread, for the filmstrip. Interior spreads pair [odd, even]. */
   const spreads = useMemo(() => {

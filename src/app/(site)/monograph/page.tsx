@@ -6,8 +6,12 @@ import SplitHeading from "@/components/motion/SplitHeading";
 import { Reveal } from "@/components/motion/Reveal";
 import { getProjects, getSettings, getSpreads } from "@/lib/content";
 import { buildBook } from "@/lib/book";
+import copy from "@/lib/monograph-pdf.json";
 
 export const revalidate = 60;
+
+/** The book as a PDF, printed from its own pages by scripts/build-monograph-pdf.mjs. */
+const COPY_HREF = "/monograph/iconic-volume-i.pdf";
 
 export const metadata: Metadata = {
   title: "Monograph",
@@ -17,6 +21,7 @@ export const metadata: Metadata = {
 export default async function MonographPage() {
   const [spreads, projects, settings] = await Promise.all([getSpreads(), getProjects(), getSettings()]);
   const pages = buildBook(spreads, projects, settings);
+  const megabytes = (copy.bytes / 1024 / 1024).toFixed(1);
 
   return (
     <>
@@ -41,17 +46,23 @@ export default async function MonographPage() {
       <section data-surface="day" className="bg-surface py-[var(--spacing-bay-lg)] text-on-surface">
         <div className="sheet grid gap-12 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-7">
-            <p className="eyebrow mb-8 text-accent">In print</p>
+            <p className="eyebrow mb-8 text-accent">A copy to keep</p>
             <SplitHeading className="inked text-d2 leading-[0.95] tracking-[-0.02em]">
-              Want it as a <em>printed copy?</em>
+              Take the volume <em>with you.</em>
             </SplitHeading>
           </div>
           <Reveal className="flex flex-col items-start gap-8 lg:col-span-4 lg:col-start-9">
             <p className="text-on-surface-muted">
-              We print a short run of the volume for clients and partners. Ask, and we will put one aside
-              for you.
+              The same book you can turn through above, page for page — to keep, to send on, or to print.
             </p>
-            <CtaLink href="/contact">Request a copy</CtaLink>
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-4">
+              <CtaLink href={COPY_HREF} download={`${settings.name} Volume I.pdf`}>
+                Request a copy
+              </CtaLink>
+              <p className="annotation text-on-surface-faint">
+                PDF · {copy.pages} pages · {megabytes} MB
+              </p>
+            </div>
           </Reveal>
         </div>
       </section>

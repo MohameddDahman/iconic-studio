@@ -88,7 +88,7 @@ Public pages are server-rendered from Convex over HTTP and revalidate every 60 s
 | `/projects/[slug]` | Case study: hero (with the lamp switch when the project has evening renders), facts, statement, gallery |
 | `/services` | Every discipline in full, process, questions |
 | `/inside` | The house: a 3D model that becomes its plan and then its materials, a walkthrough film and two rooms that build themselves — each playing as its section scrolls past — then every room by day and after dark |
-| `/monograph` | The work as a book with page-turn animation |
+| `/monograph` | The work as a book with page-turn animation, and the same book as a PDF to keep |
 | `/studio`, `/contact` | The studio, principles, process, reviews, credits; phone, WhatsApp, address with a map, and every link the studio keeps online |
 
 ## Scripts
@@ -100,6 +100,7 @@ Public pages are server-rendered from Convex over HTTP and revalidate every 60 s
 | `node scripts/build-media-manifest.mjs` | Reads every image under `public/media` (subfolders included), records intrinsic sizes and bakes blur placeholders into `src/lib/media-manifest.json`. Run after adding images. |
 | `node scripts/scroll-test.mjs [base] [routes…]` | Wheel-scroll test: each notch must move the page exactly one notch, with no height changes and no drift |
 | `node scripts/create-desk-account.mjs [--prod]` | Makes a studio desk account for an allowed address, asking for the password at the prompt. The site has no sign-up. |
+| `node scripts/build-monograph-pdf.mjs [base]` | Prints the monograph, page for page, into `public/monograph/iconic-volume-i.pdf`, the copy behind the monograph page's Request a copy. Prints from the live site unless given a base URL. Run it after changing the monograph or its projects, then deploy |
 | `node scripts/import-seed.mjs [--prod] [--replace]` | Uploads the bundled photographs to Convex and rebuilds the seed projects, rooms, spreads, reviews and settings there, so the studio desk can edit them |
 | `node scripts/extract-film-frames.mjs <video> <out> [--fps] [--every] [--width] [--end] [--crop] [--portrait]` | Turns a video into a silent WebP frame sequence for the scroll films (decoded by Edge, no ffmpeg needed) |
 | `node scripts/shots.mjs [--mobile] [--full]` | Screenshots every route into `.shots/` |

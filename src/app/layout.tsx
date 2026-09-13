@@ -42,7 +42,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body>
         <a
           href="#main"
-          className="annotation fixed top-3 left-3 z-[300] -translate-y-24 bg-night px-4 py-3 text-bone transition-transform focus-visible:translate-y-0"
+          className="annotation fixed top-3 left-3 z-[300] -translate-y-24 bg-night px-4 py-3 text-bone transition-transform focus-visible:translate-y-0 print:hidden"
         >
           Skip to content
         </a>

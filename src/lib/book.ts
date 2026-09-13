@@ -129,6 +129,15 @@ export function buildBook(
   return pages;
 }
 
+/** The span of project years in the volume, as the cover and colophon print it. */
+export function yearsOf(pages: BookPage[]) {
+  const all = pages.flatMap((p) => (p.kind === "opener" && p.project ? [p.project.year] : []));
+  if (all.length === 0) return "";
+  const lo = Math.min(...all);
+  const hi = Math.max(...all);
+  return lo === hi ? String(lo) : `${lo} — ${hi}`;
+}
+
 /** Which spread a page index belongs to, for "Spread 3 of 9" style status. */
 export function spreadOf(pageIndex: number, pageCount: number) {
   if (pageIndex <= 0) return 0;

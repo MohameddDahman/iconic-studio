@@ -442,3 +442,76 @@
     transform: rotateY(-18deg);
   }
 }
+
+/*
+ * The monograph laid flat for print: /monograph/print, which the PDF copy is
+ * printed from. Pages keep the flipbook's own size, so the type (set in
+ * container units with rem limits) keeps its proportions, and the printer
+ * scales them up to 240 x 307 mm. What only makes sense on a page being turned
+ * is left out: the gutter shadow, the moving foil, and the paper grain, which
+ * would print as a full-page image on every page.
+ */
+.book-print {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 24px;
+  background: #d2c7b5;
+}
+
+.book-print-sheet {
+  flex: none;
+  width: 540px;
+  height: 690.75px;
+  overflow: hidden;
+  break-after: page;
+}
+
+.book-print-sheet:last-child {
+  break-after: auto;
+}
+
+.book-print .book-paper {
+  background-image: none;
+}
+
+.book-print .book-gutter {
+  display: none;
+}
+
+.book-print .book-foil {
+  animation: none;
+  background-image: none;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  color: #e0b172;
+}
+
+/*
+ * A soft gradient prints through a transparency mask, which some PDF readers
+ * draw in magenta. The printed page uses opaque colour instead: the board's
+ * glow already mixed onto the board, and a solid label under each plate
+ * caption in place of the fade.
+ */
+.book-print .book-glow {
+  background-image: radial-gradient(90% 60% at 50% 0%, rgb(57 47 33), rgb(15 14 13) 70%);
+}
+
+.book-print .book-shade {
+  display: none;
+}
+
+.book-print .book-caption > span {
+  padding: 0.35em 0.6em;
+  background-color: rgb(15 14 13);
+  color: var(--color-bone);
+}
+
+@media print {
+  .book-print {
+    gap: 0;
+    padding: 0;
+    background: none;
+  }
+}

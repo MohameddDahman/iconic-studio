@@ -119,7 +119,7 @@ After that they sign in at <https://iconic-studio-six.vercel.app/admin> with tha
 
 ## 7. Before launch
 
-- [ ] Replace or delete the seven placeholder projects
+- [ ] Replace or delete the seven placeholder projects, then print the monograph PDF again (`node scripts/build-monograph-pdf.mjs`)
 - [ ] Get original exports of the studio's renders and upload them at `/admin`
 - [ ] Confirm the Vecteezy licence, and the rights to the two Instagram clips (or replace them)
 - [ ] Confirm project titles, descriptions and the services copy
@@ -146,5 +146,6 @@ Without `--replace` the import stops rather than writing over rows that already 
 - **The signed-in desk has not had a first run yet.** The functions are deployed to the dev deployment and the public side answers, but saving, uploading and deleting need a signed-in account, which only a person can set up. After setting the password, add a test project with a photograph, give a photograph an evening version, and delete both.
 - **Password resets go through the developer.** There is no email provider, so for a forgotten password delete that person's row in `authAccounts` in the Convex dashboard, then run `node scripts/create-desk-account.mjs` for them again.
 - **The seed content's evening pairs stay in code.** Photographs uploaded at `/admin` get their evening version there; the seed set's pairs are still declared in `src/lib/seed.ts`.
+- **The monograph PDF is a snapshot.** Request a copy on `/monograph` hands out `public/monograph/iconic-volume-i.pdf`, printed from the book's own pages (at `/monograph/print`, which nothing links to) so it matches the site page for page. It does not follow edits by itself: after changing the monograph or its projects at `/admin`, run `node scripts/build-monograph-pdf.mjs` and deploy. For now it includes the seven stock-photo placeholder projects, like the book on the site.
 - **Weight.** The film frames total about 21 MB on disk, but a visitor downloads one walkthrough set — 9.1 MB on a computer, 5.3 MB on a phone — plus 6.7 MB for the two build clips, and only every second frame when the browser asks to save data or the connection is slow. The 3D assets are about 13 MB (including a 1.6 MB lighting HDRI). Both load only when their section comes near, and the films load coarse frames first.
 - **No test suite** beyond type-checking, linting, `scripts/scroll-test.mjs` and the screenshot scripts.

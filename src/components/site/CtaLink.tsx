@@ -11,12 +11,15 @@ export default function CtaLink({
   children,
   variant = "solid",
   size = "md",
+  download,
   className,
 }: {
   href: string;
   children: string;
   variant?: "solid" | "outline";
   size?: "sm" | "md";
+  /** Hand over the file at href under this name, rather than opening it. */
+  download?: string;
   className?: string;
 }) {
   const solid = variant === "solid";
@@ -24,6 +27,8 @@ export default function CtaLink({
   return (
     <TransitionLink
       href={href}
+      plain={download !== undefined}
+      download={download}
       className={cn(
         "group relative isolate inline-flex shrink-0 cursor-pointer items-center overflow-hidden rounded-full transition-[color,border-color] duration-500",
         size === "md" ? "h-13 gap-5 pr-1.5 pl-7" : "h-11 gap-4 pr-1 pl-5",
