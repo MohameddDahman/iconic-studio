@@ -98,7 +98,7 @@ Every save reports whether it worked, and the editors ask before discarding unsa
 
 | | Deployment | `SITE_URL` |
 |---|---|---|
-| Live site | `whimsical-donkey-415` (production) | `https://iconic-studio-six.vercel.app` |
+| Live site | `whimsical-donkey-415` (production) | `https://iconic-architecture.vercel.app` |
 | Local | `brave-toucan-31` (dev, URLs in `.env.local`) | `http://localhost:3000` |
 
 Both carry their own sign-in keys (`JWT_PRIVATE_KEY`, `JWKS`) and their own `ADMIN_EMAILS`, and both hold the full content — the import was run against each.
@@ -115,7 +115,7 @@ Then make each person an account, with them at the keyboard for the password:
 node scripts/create-desk-account.mjs --prod
 ```
 
-After that they sign in at <https://iconic-studio-six.vercel.app/admin> with that address and password.
+After that they sign in at <https://iconic-architecture.vercel.app/admin> with that address and password.
 
 ## 7. Before launch
 
@@ -142,7 +142,7 @@ Without `--replace` the import stops rather than writing over rows that already 
 
 ## 9. Known limitations
 
-- **Where it is deployed.** The site is on Vercel (project `iconic-studio`, <https://iconic-studio-six.vercel.app>), built from <https://github.com/MohameddDahman/iconic-studio>. `npx vercel deploy --prod` publishes again from this folder.
+- **Where it is deployed.** The site is on Vercel (project `iconic-studio`, <https://iconic-architecture.vercel.app>), built from <https://github.com/MohameddDahman/iconic-studio>. `npx vercel deploy --prod` publishes again from this folder.
 - **The signed-in desk has not had a first run yet.** The functions are deployed to the dev deployment and the public side answers, but saving, uploading and deleting need a signed-in account, which only a person can set up. After setting the password, add a test project with a photograph, give a photograph an evening version, and delete both.
 - **Password resets go through the developer.** There is no email provider, so for a forgotten password delete that person's row in `authAccounts` in the Convex dashboard, then run `node scripts/create-desk-account.mjs` for them again.
 - **The seed content's evening pairs stay in code.** Photographs uploaded at `/admin` get their evening version there; the seed set's pairs are still declared in `src/lib/seed.ts`.

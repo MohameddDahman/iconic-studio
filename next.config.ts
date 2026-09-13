@@ -1,6 +1,18 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // The site's first address. It forwards to the current one, temporarily,
+  // because that is itself a stand-in until the studio has its own domain.
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "iconic-studio-six.vercel.app" }],
+        destination: "https://iconic-architecture.vercel.app/:path*",
+        permanent: false,
+      },
+    ];
+  },
   images: {
     // Photographs uploaded from the studio desk are served from Convex storage.
     remotePatterns: [

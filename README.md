@@ -54,7 +54,7 @@ CONVEX_DEPLOYMENT=prod:whimsical-donkey-415 npx convex deploy
 | | |
 |---|---|
 | Repository | <https://github.com/MohameddDahman/iconic-studio> (private) |
-| Site | <https://iconic-studio-six.vercel.app> — Vercel project `iconic-studio` |
+| Site | <https://iconic-architecture.vercel.app> — Vercel project `iconic-studio`. The first address, iconic-studio-six.vercel.app, forwards here |
 | Backend | Convex `whimsical-donkey-415` (production) and `brave-toucan-31` (dev) |
 
 Vercel holds `NEXT_PUBLIC_CONVEX_URL` and `NEXT_PUBLIC_CONVEX_SITE_URL` on all three environments; the pages are built against production Convex. Deploy again with:

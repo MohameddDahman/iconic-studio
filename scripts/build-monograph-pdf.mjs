@@ -17,7 +17,7 @@ import path from "node:path";
 import { chromium } from "playwright";
 import sharp from "sharp";
 
-const BASE = (process.argv[2] ?? "https://iconic-studio-six.vercel.app").replace(/\/$/, "");
+const BASE = (process.argv[2] ?? "https://iconic-architecture.vercel.app").replace(/\/$/, "");
 const OUT = path.join("public", "monograph", "iconic-volume-i.pdf");
 const MANIFEST = path.join("src", "lib", "monograph-pdf.json");
 
