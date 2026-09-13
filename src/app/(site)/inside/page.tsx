@@ -75,7 +75,7 @@ export default async function InsidePage() {
           caption: "Bedroom — from shell to styled",
         }}
         wide={{
-          frames: { base: "/film/living", count: 153, width: 640, height: 458 },
+          frames: { base: "/film/living", count: 153, width: 628, height: 446 },
           poster: "/film/living/f-000.webp",
           caption: "Living room — from shell to furnished",
         }}
