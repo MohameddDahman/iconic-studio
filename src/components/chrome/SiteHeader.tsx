@@ -10,15 +10,6 @@ import { cn } from "@/lib/utils";
 
 type Surface = "night" | "day";
 
-/** The mark: an open doorway inside a square — the moment of walking into a room. */
-export function IconicMark({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 28 28" fill="none" aria-hidden="true" className={className}>
-      <rect x="1.5" y="1.5" width="25" height="25" stroke="currentColor" strokeWidth="1.3" />
-      <path d="M9 26.5V13.2a5 5 0 0 1 10 0v13.3" stroke="currentColor" strokeWidth="1.3" />
-    </svg>
-  );
-}
 
 function RollLabel({ children }: { children: string }) {
   return (
@@ -177,15 +168,18 @@ export default function SiteHeader() {
         )}
       >
         <div className="sheet flex h-[4.5rem] items-center justify-between gap-6 md:h-20">
-          <TransitionLink href="/" className="group flex items-center gap-3" aria-label={`${STUDIO.name} — home`}>
-            <IconicMark className="size-7 transition-transform duration-700 ease-cut group-hover:rotate-90" />
-            <span className="flex flex-col leading-none">
-              <span className="text-[1.02rem] font-[620] tracking-[0.42em] uppercase [font-variation-settings:'wdth'_125]">
-                Iconic
-              </span>
-              <span className="eyebrow mt-1.5 hidden text-[0.5rem] tracking-[0.34em] whitespace-nowrap text-on-surface-faint sm:block">
-                Architecture · Interiors · Alexandria
-              </span>
+          <TransitionLink href="/" className="group flex flex-col gap-1.5" aria-label={`${STUDIO.legalName} — home`}>
+            {/*
+              The word out of the studio logo, drawn as a shape rather than a picture,
+              so it takes the colour of whatever section is under the header — light on
+              the dark ones, ink on the pale ones — the way the old wordmark did.
+            */}
+            <span
+              aria-hidden="true"
+              className="block h-8 w-[5.33rem] bg-current transition-transform duration-700 ease-cut [-webkit-mask-image:url(/brand/iconic-word.png)] [-webkit-mask-position:left_center] [-webkit-mask-repeat:no-repeat] [-webkit-mask-size:contain] [mask-image:url(/brand/iconic-word.png)] [mask-position:left_center] [mask-repeat:no-repeat] [mask-size:contain] group-hover:-translate-y-px md:h-9 md:w-[6rem]"
+            />
+            <span className="eyebrow hidden text-[0.5rem] tracking-[0.2em] whitespace-nowrap text-on-surface-faint sm:block">
+              Architecture Design - Landscape And Interior
             </span>
           </TransitionLink>
 

@@ -195,15 +195,16 @@ export default function HeroCinema({ slides, lead }: { slides: HeroSlide[]; lead
             alt={STUDIO.legalName}
             data-hero-fade
             preload
-            sizes="(min-width: 768px) 15rem, 45vw"
-            className="mb-6 h-auto w-[clamp(8rem,15vw,14rem)] md:mb-8"
+            sizes="(min-width: 768px) 11rem, 30vw"
+            // Sized against the height as well, so the hero never grows past a short screen.
+            className="mb-5 h-[clamp(2.1rem,min(4.6vw,5.6vh),3.6rem)] w-auto md:mb-7"
           />
 
-          <p data-hero-fade className="eyebrow mb-7 max-w-[22ch] text-balance text-bone/70 md:mb-9 md:max-w-none">
+          <p data-hero-fade className="eyebrow mb-5 max-w-[22ch] text-balance text-bone/70 md:mb-7 md:max-w-none">
             Architecture Design · Landscape · Interior
           </p>
 
-          <h1 className="text-d1 leading-[0.86] tracking-[-0.025em]">
+          <h1 className="text-[clamp(2.8rem,min(10vw,16vh),9rem)] leading-[0.86] tracking-[-0.025em]">
             <span className="block overflow-hidden pb-[0.07em]">
               <span data-hero-line className="condensed block font-[760] uppercase">
                 Your space
