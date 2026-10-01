@@ -2,7 +2,7 @@
  * Screenshot the running dev server at real viewport sizes.
  *
  *   node scripts/shots.mjs                      # every route, desktop
- *   node scripts/shots.mjs /inside --mobile     # one route, 390px
+ *   node scripts/shots.mjs /projects --mobile   # one route, 390px
  *   node scripts/shots.mjs /projects --full     # full-page capture
  *
  * Animations are given time to settle and reduced-motion is NOT forced, so what
@@ -21,7 +21,7 @@ const outDir = path.join(process.cwd(), ".shots");
 const BASE = process.env.SHOT_BASE ?? "http://localhost:3000";
 const ROUTES = routes.length
   ? routes
-  : ["/", "/projects", "/inside", "/monograph", "/studio", "/contact"];
+  : ["/", "/projects", "/monograph", "/studio", "/reviews", "/contact"];
 
 fs.mkdirSync(outDir, { recursive: true });
 

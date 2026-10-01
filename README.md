@@ -83,13 +83,13 @@ Public pages are server-rendered from Convex over HTTP and revalidate every 60 s
 
 | Route | What is on it |
 |---|---|
-| `/` | Film-title hero reel, studio statement, services index, day/evening lamp showcase, a swipeable project strip, house teaser, process, reviews, monograph |
+| `/` | The studio logo and slogan over a film-title hero reel, studio statement, services index, day/evening lamp showcase, a swipeable project strip, process, monograph |
 | `/projects` | Portfolio with sector filters (animated with GSAP Flip) and a grid/list view |
 | `/projects/[slug]` | Case study: hero (with the lamp switch when the project has evening renders), facts, statement, gallery |
 | `/services` | Every discipline in full, process, questions |
-| `/inside` | The house: a 3D model that becomes its plan and then its materials, a walkthrough film and two rooms that build themselves — each playing as its section scrolls past — then every room by day and after dark |
 | `/monograph` | The work as a book with page-turn animation, and the same book as a PDF to keep |
-| `/studio`, `/contact` | The studio, principles, process, reviews, credits; phone, WhatsApp, address with a map, and every link the studio keeps online |
+| `/reviews` | Every client recommendation, Arabic as written with an English reading beneath |
+| `/studio`, `/contact` | The studio, principles, process, credits; phone, WhatsApp, address with a map, and every link the studio keeps online |
 
 ## Scripts
 
@@ -102,7 +102,7 @@ Public pages are server-rendered from Convex over HTTP and revalidate every 60 s
 | `node scripts/create-desk-account.mjs [--prod]` | Makes a studio desk account for an allowed address, asking for the password at the prompt. The site has no sign-up. |
 | `node scripts/build-monograph-pdf.mjs [base]` | Prints the monograph, page for page, into `public/monograph/iconic-volume-i.pdf`, the copy behind the monograph page's Request a copy. Prints from the live site unless given a base URL. Run it after changing the monograph or its projects, then deploy |
 | `node scripts/import-seed.mjs [--prod] [--replace]` | Uploads the bundled photographs to Convex and rebuilds the seed projects, rooms, spreads, reviews and settings there, so the studio desk can edit them |
-| `node scripts/extract-film-frames.mjs <video> <out> [--fps] [--every] [--width] [--end] [--crop] [--portrait]` | Turns a video into a silent WebP frame sequence for the scroll films (decoded by Edge, no ffmpeg needed) |
+| `node scripts/extract-film-frames.mjs <video> <out> [--fps] [--every] [--width] [--end] [--crop] [--portrait]` | Turns a video into a silent WebP frame sequence for a scroll film (decoded by Edge, no ffmpeg needed). Nothing uses it at the moment — the films went with the house page — but it is how a film would be prepared |
 | `node scripts/shots.mjs [--mobile] [--full]` | Screenshots every route into `.shots/` |
 | `node scripts/shot-scroll.mjs <route> <depths…>` | Screenshots one route at given scroll depths |
 | `node scripts/patch-overlays.mjs <dir>` | Clones out Instagram UI overlays from images recovered from screenshots |
@@ -115,8 +115,7 @@ convex/              schema, queries, mutations, password auth (allowlisted)
 public/
   media/client/      the studio's own renders (incl. day/evening pairs)
   media/stock/       licensed photography (credits in src/lib/media-credits.json)
-  film/              silent frame sequences for the scroll films
-  house/             3D models, textures and HDRI (CC0, see CREDITS.json)
+  brand/             the studio logo, its mark and the word on its own
 src/app/
   layout.tsx         html, fonts, scroll sync, route transitions
   (site)/            the public site — header, footer, pages
@@ -125,7 +124,6 @@ src/components/
   motion/            route transitions, headings, reveals, frame sequences
   chrome/            header, footer
   site/              page sections, lamp switch, films, book
-  house/             the 3D process model (three.js)
   admin/             the desk
 src/lib/             types, content layer, seed content, practice data, lights store
 ```
@@ -133,7 +131,7 @@ src/lib/             types, content layer, seed content, practice data, lights s
 ## Accessibility and behaviour
 
 - Scrolling is native: no smooth-scroll library, no speed changes, nothing scrolls the page on its own, and nothing pins or holds the page. Scroll-linked effects play while their section crosses the screen.
-- Every timeline is authored inside `gsap.matchMedia()`; under `prefers-reduced-motion` the final state is shown, the films become posters and the 3D house becomes a static drawing.
+- Every timeline is authored inside `gsap.matchMedia()`; under `prefers-reduced-motion` the final state is shown instead of the movement.
 - The lamp switch is a real `aria-pressed` toggle; the films and the 3D stages carry their chapter text as `sr-only` lists.
 - Route changes announce the destination and move focus into `#main`. Links are real anchors.
 - The site is complete without JavaScript — a `noscript` rule reveals anything that script would have revealed.

@@ -79,15 +79,6 @@ export default function Overview() {
         : undefined,
     },
     {
-      href: "/admin/walkthrough",
-      label: "Rooms",
-      state: data.rooms.onSite ? "live" : "seed",
-      summary: `${count(data.rooms.onSite, "room")} listed at /inside`,
-      attention: data.rooms.withoutPhoto
-        ? `${count(data.rooms.withoutPhoto, "published room")} without a photograph, so left out`
-        : undefined,
-    },
-    {
       href: "/admin/settings",
       label: "Settings",
       state: data.settingsSaved ? "live" : "seed",

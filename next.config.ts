@@ -5,6 +5,12 @@ const nextConfig: NextConfig = {
   // because that is itself a stand-in until the studio has its own domain.
   async redirects() {
     return [
+      // The house page is retired; its work lives in the portfolio.
+      {
+        source: "/inside",
+        destination: "/projects",
+        permanent: false,
+      },
       {
         source: "/:path*",
         has: [{ type: "host", value: "iconic-studio-six.vercel.app" }],

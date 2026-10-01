@@ -6,7 +6,7 @@
  * scrolling, and that nothing keeps scrolling after the wheel stops.
  *
  *   npm run dev            (in another terminal)
- *   node scripts/scroll-test.mjs [http://localhost:3000] [/ /projects /inside …]
+ *   node scripts/scroll-test.mjs [http://localhost:3000] [/ /projects /monograph …]
  *
  * Smooth scrolling is disabled in the test browser so a notch is exactly 120px.
  */
@@ -14,7 +14,7 @@ import { chromium } from "playwright";
 
 const args = process.argv.slice(2);
 const base = args[0]?.startsWith("http") ? args.shift() : "http://localhost:3000";
-const routes = args.length ? args : ["/", "/projects", "/services", "/inside", "/monograph", "/studio", "/contact"];
+const routes = args.length ? args : ["/", "/projects", "/services", "/monograph", "/studio", "/reviews", "/contact"];
 
 const NOTCH = 120;
 const browser = await chromium.launch({ args: ["--disable-smooth-scrolling"] });

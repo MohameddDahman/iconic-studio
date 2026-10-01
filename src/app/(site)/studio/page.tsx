@@ -48,7 +48,7 @@ export default async function StudioPage() {
   return (
     <>
       <PageHeader
-        sheet="05"
+        sheet="04"
         eyebrow="Studio"
         title={
           <>

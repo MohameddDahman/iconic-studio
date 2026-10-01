@@ -6,7 +6,6 @@ export type SheetKey =
   | "home"
   | "projects"
   | "services"
-  | "inside"
   | "monograph"
   | "studio"
   | "reviews"
@@ -24,11 +23,10 @@ export const SHEETS: Sheet[] = [
   { key: "home", href: "/", label: "Home", sheet: "00", title: "Iconic" },
   { key: "projects", href: "/projects", label: "Projects", sheet: "01", title: "Selected projects" },
   { key: "services", href: "/services", label: "Services", sheet: "02", title: "What we design" },
-  { key: "inside", href: "/inside", label: "The House", sheet: "03", title: "Walk through the house" },
-  { key: "monograph", href: "/monograph", label: "Monograph", sheet: "04", title: "The book" },
-  { key: "studio", href: "/studio", label: "Studio", sheet: "05", title: "The studio" },
-  { key: "reviews", href: "/reviews", label: "Reviews", sheet: "06", title: "Client reviews" },
-  { key: "contact", href: "/contact", label: "Contact", sheet: "07", title: "Start a project" },
+  { key: "monograph", href: "/monograph", label: "Monograph", sheet: "03", title: "The book" },
+  { key: "studio", href: "/studio", label: "Studio", sheet: "04", title: "The studio" },
+  { key: "reviews", href: "/reviews", label: "Reviews", sheet: "05", title: "Client reviews" },
+  { key: "contact", href: "/contact", label: "Contact", sheet: "06", title: "Start a project" },
 ];
 
 /** The nav omits home — the wordmark already goes there. */

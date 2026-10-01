@@ -3,7 +3,6 @@ import IntroStatement from "@/components/site/IntroStatement";
 import Disciplines from "@/components/site/Disciplines";
 import DayNight from "@/components/site/DayNight";
 import FeaturedWork from "@/components/site/FeaturedWork";
-import HouseTeaser from "@/components/site/HouseTeaser";
 import ProcessSteps from "@/components/site/ProcessSteps";
 import MonographTeaser from "@/components/site/MonographTeaser";
 import { DISCIPLINES, STAGES } from "@/lib/practice";
@@ -89,7 +88,6 @@ export default async function HomePage() {
         />
       )}
       <FeaturedWork projects={featured} total={projects.length} />
-      <HouseTeaser />
       <ProcessSteps stages={STAGES} />
       <MonographTeaser spreads={spreads} />
     </>

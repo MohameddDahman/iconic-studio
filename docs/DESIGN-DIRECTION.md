@@ -27,7 +27,7 @@ subject, real drawings — and changes everything else:
 | Drawing-sheet metaphor everywhere (ID-000, datums) | A calm gallery layout; drawings appear only where they explain something |
 | Low-resolution screenshots as the main imagery | Full-resolution photography, plus the studio's own renders where they are strongest |
 | Fraunces + Archivo | Instrument Serif + Mona Sans |
-| Room-by-room pinned walkthrough | A 3D model, scroll films and a day/evening lamp switch |
+| Room-by-room pinned walkthrough | A day/evening lamp switch on the studio's own renders |
 | Smooth-scroll library | The browser's own scrolling, untouched |
 
 ## 2. The direction — "Gallery"
@@ -47,14 +47,6 @@ whichever section is beneath it.
    page at once; the evening render is revealed through a circle that grows out
    of the room's own light. It is the clearest possible way to show that the
    lighting is designed.
-2. **The process model** (`/inside`). An apartment as a white clay model that
-   sinks into its own plan — walls, door swings, furniture and dimensions
-   drawing themselves — and rises again in real finishes: herringbone oak,
-   bouclé, linen, walnut, marble. The lamp switch turns it to evening.
-3. **Scroll films.** A walkthrough, and two empty rooms that finish themselves,
-   played by the scroll position as their sections pass across the screen.
-4. **The monograph.** The work as a real book, turned page by page.
-
 ## 4. Palette
 
 | Token | Hex | Use |
@@ -88,7 +80,7 @@ whichever section is beneath it.
   destination's name; a clicked project photograph grows into the case study's
   hero instead.
 - **Reduced motion** — every timeline lives inside `gsap.matchMedia()`; the
-  films become posters and the 3D model becomes a static drawing.
+  final state is shown in place of the movement.
 
 ## 7. Performance rules
 
@@ -109,11 +101,10 @@ whichever section is beneath it.
 
 | Route | Job |
 |---|---|
-| `/` | The reel, the studio in one sentence, what we design, day & evening, selected work, the house, process, reviews, the book |
+| `/` | The logo and slogan over the reel, the studio in one sentence, what we design, day & evening, selected work, process, the book |
 | `/projects` | The portfolio, filterable by sector |
 | `/projects/[slug]` | Case study |
 | `/services` | Every discipline, the process, questions |
-| `/inside` | The house — model, films, rooms by day and after dark |
 | `/monograph` | The book |
 | `/studio` | Principal, principles, process, reviews, credits |
 | `/contact` | Enquiry |

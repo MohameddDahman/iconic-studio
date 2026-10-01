@@ -11,19 +11,16 @@ Read this before the site is shown publicly.
 | **The studio's own renders** | `public/media/client/` | Real work, cut from the Instagram posts the client supplied (1080 px wide). Two are day/evening pairs used by the lamp switch: the boho family living room and the guest bath with the petal pendant. **Ask the studio for the original exports** — they will be sharper everywhere. |
 | **Stock photography** | `public/media/stock/` | Unsplash, used under the Unsplash License. Photographers are listed in `src/lib/media-credits.json` and credited at the bottom of `/studio`. |
 | Earlier screenshots | `public/media/*.jpg` | From the first Drive folder. No longer referenced by the site; safe to delete once the studio has its originals. |
-| **Walkthrough film** | `public/film/landscape`, `public/film/portrait`, `public/film/poster.webp` | From Vecteezy (`vecteezy_modern-open-concept-apartment-interior-design-with-living_72006478.mp4`). **Confirm the licence it was downloaded under allows use on a commercial website, and add attribution if that licence requires it.** |
-| **"Shell to styled" clips** | `public/film/bedroom`, `public/film/living` | Downloaded from Instagram (SnapInsta). **The rights to these belong to their creators — get permission or replace them with the studio's own clips before launch.** The living-room clip ended on a promotional caption ("Comment AI RENDER…"); the sequence stops at 5.15 s so it is never shown. |
-| **3D house** | `public/house/` | Poly Haven models, textures and HDRI, CC0 (no attribution required). Listed in `public/house/CREDITS.json`. |
 
-Every film on the site is a silent WebP frame sequence — there is no audio anywhere. The walkthrough uses every second frame of its 60 fps source (238 frames at 1600 × 900, plus a 720 × 1280 set for phones). The two build clips use every frame of their 30 fps sources: the bedroom 212 frames at 540 × 960, and the living room 153 frames at 628 × 446, with the clip's black border — and the dark corner it left behind — cropped off.
+**The house page is retired.** It showed a 3D apartment, a stock walkthrough film and two clips taken from Instagram — none of it the studio's own work, and the studio did not want it. The page, its parts and 31.5 MB of film and 3D assets were removed (commit history keeps them, so it can all come back). Two licence questions went with it: the Vecteezy film and the rights to the Instagram clips.
 
-To replace a film with the studio's own:
+If a film is ever wanted again:
 
 ```bash
 node scripts/extract-film-frames.mjs path/to/video.mp4 public/film/walkthrough --fps 30 --width 1600 --portrait 720
 ```
 
-`--fps` is the video's own frame rate, so every output frame is a distinct source frame (add `--every 2` for 60 fps footage; `--crop top,right,bottom,left` trims a border). The script prints the frame count and size — point the `FilmScroll` / `BuildDuo` props in `src/app/(site)/inside/page.tsx` at the new folder, count and size.
+`--fps` is the video's own frame rate, so every output frame is a distinct source frame (add `--every 2` for 60 fps footage; `--crop top,right,bottom,left` trims a border). The script prints the frame count and size. The player that drew these films (`useFrameSequence`, with `FilmScroll` and `BuildDuo`) was removed with the page; it is in the history if it is needed again.
 
 ## 2. Placeholder projects — must not go live as they are
 
@@ -46,7 +43,7 @@ The four real projects — Modern Boho Residence, Warm Minimal Guest Bath, Stone
 | What | Where | Status |
 |---|---|---|
 | Real project titles and statements | `src/lib/seed.ts` | Written from the renders — confirm |
-| Walkthrough room notes | `SEED_THRESHOLDS` | Illustrative — they describe the rooms of the 3D house |
+| Walkthrough room notes | `SEED_THRESHOLDS` | Illustrative, and no longer shown anywhere — they described the rooms of the retired house page. The records and their editing screen are intact, just out of the desk navigation |
 | Home page figures | `src/app/(site)/page.tsx` | Counted from the content (projects, disciplines, sectors, reviews), so they stay true as content changes |
 | Services and FAQ copy | `src/lib/practice.ts`, `src/app/(site)/services/page.tsx` | General, no prices or promises — confirm the wording |
 | Phone, WhatsApp, address, map and links | `/admin` → Settings | Real — from the studio's Linktree and its Google Maps listing. There is no public email yet: add one in Settings and it appears on the contact page and in the footer |
@@ -55,7 +52,7 @@ The five reviews are real Facebook recommendations (English verbatim; Arabic sho
 
 ## 4. Scrolling
 
-Scrolling is the browser's own. There is no smooth-scroll library, nothing changes scroll speed, and nothing scrolls the page by itself. One section holds deliberately: the 3D process at `/inside` is three screens tall and keeps its drawing in view (`position: sticky`) while the model plays its three stages, then releases — the studio asked for that, so the stages are not missed. The page still moves exactly as far as the wheel or the finger asks. The 3D process and the films play while their section passes across the screen — the page keeps moving the whole time — and the project reel on the home page is a strip you swipe, drag or move with its arrows.
+Scrolling is the browser's own. There is no smooth-scroll library, nothing changes scroll speed, nothing scrolls the page by itself, and nothing holds the page any more — the one section that did, the 3D process, went with the house page. The project reel on the home page is a strip you swipe, drag or move with its arrows.
 
 The earlier complaints — "sometimes too fast, sometimes too slow" and "I can't move freely" — came from a smooth-scroll library and from sections that held the screen while their animation played (the old walkthrough, the pinned project reel, the sticky film sections). All of them are gone. The header's background blur and a blended grain overlay were also removed, because both cost a full repaint on every scroll frame.
 
@@ -67,22 +64,8 @@ node scripts/scroll-test.mjs
 
 At handover every page passed: each wheel notch moves the page exactly one notch, the page height never changes while scrolling, and there is zero drift after the wheel stops.
 
-The films follow the scroll without costing it frames. One decoder, shared by all three films, works off the main thread on the frames about to be shown — the current one and a few ahead in the direction of travel — with the film on screen first. Decoded frames sit in a small cache that is freed while the browser is idle, each film paints in the same animation frame as the scroll that moved it, and on a slow scroll neighbouring frames dissolve into each other instead of stepping. Measured at the development laptop's size (1507 × 733 at 125%, Edge on its own GPU), the film sections hold 60 fps — 16.7 ms a frame on average, with no frame over 25 ms — where the previous player dropped roughly one frame in five.
 
-## 5. The 3D house
-
-`src/components/house/` — three.js, loaded only when the section approaches.
-
-- `plan.ts` — the apartment in metres (walls, openings, room labels). It is an illustrative layout, not a client project.
-- `engine.ts` — the scene, furniture placement, lighting, the three stages and the lamp.
-- `furniture.ts` — procedural sofa, bed, kitchen, island, chairs and architecture.
-- `look.ts` — the shared clay / drawing / finished material behaviour.
-
-The words sit in a title block beside the drawing — above it on a phone — so the model never runs under text; within its own area the model drifts toward the part that is on screen. The canvas is transparent and the section paints the ground colour, so the title block and the drawing always match exactly, in daylight, on the dark drawing and in the evening.
-
-It is built to stay light: it renders only when the scroll position or the lamp changes, furniture is merged into a handful of draw calls, shadows are drawn only when the model changes shape, and the evening lights are switched off entirely in daylight. Ambient occlusion (at half resolution) and anti-aliasing run only on a wide screen with the power connected; phones and laptops on battery get a lighter path, and the model drops its post-processing and resolution on its own if frames slow. With reduced motion, or if WebGL is unavailable, a static drawing and the three stage descriptions are shown instead. A still render is saved at `public/house/poster.webp`.
-
-## 6. The studio desk
+## 5. The studio desk
 
 `/admin`, backed by Convex. Nothing on it is public.
 
@@ -117,18 +100,17 @@ node scripts/create-desk-account.mjs --prod
 
 After that they sign in at <https://iconic-architecture.vercel.app/admin> with that address and password.
 
-## 7. Before launch
+## 6. Before launch
 
 - [ ] Replace or delete the seven placeholder projects, then print the monograph PDF again (`node scripts/build-monograph-pdf.mjs`)
 - [ ] Get original exports of the studio's renders and upload them at `/admin`
-- [ ] Confirm the Vecteezy licence, and the rights to the two Instagram clips (or replace them)
 - [ ] Confirm project titles, descriptions and the services copy
 - [x] Real phone, WhatsApp, address, map and links in `/admin` → Settings — add an email there if the studio wants one on the site
 - [ ] Add the studio's domain in Vercel, set `NEXT_PUBLIC_SITE_URL` there and `SITE_URL` on production Convex to match, and add an OG image
 - [ ] `ADMIN_EMAILS` with the studio's addresses on the production deployment, then `node scripts/create-desk-account.mjs --prod` for each person
 - [ ] Run `node scripts/scroll-test.mjs` and `npm run build`
 
-## 8. Getting the content in
+## 7. Getting the content in
 
 The site's seed content — projects, rooms, monograph spreads, reviews and settings — has been imported into Convex, so it is all editable at `/admin`. The photographs were uploaded from `public/media`; the records were rebuilt from `src/lib/seed.ts`.
 
@@ -140,12 +122,12 @@ node scripts/import-seed.mjs --replace  # clear what is there and import again
 
 Without `--replace` the import stops rather than writing over rows that already exist. The seven stock-photo projects keep their **Stock placeholder** marker in the desk, so they can still be found and replaced before launch.
 
-## 9. Known limitations
+## 8. Known limitations
 
 - **Where it is deployed.** The site is on Vercel (project `iconic-studio`, <https://iconic-architecture.vercel.app>), built from <https://github.com/MohameddDahman/iconic-studio>. `npx vercel deploy --prod` publishes again from this folder.
 - **The signed-in desk has not had a first run yet.** The functions are deployed to the dev deployment and the public side answers, but saving, uploading and deleting need a signed-in account, which only a person can set up. After setting the password, add a test project with a photograph, give a photograph an evening version, and delete both.
 - **Password resets go through the developer.** There is no email provider, so for a forgotten password delete that person's row in `authAccounts` in the Convex dashboard, then run `node scripts/create-desk-account.mjs` for them again.
 - **The seed content's evening pairs stay in code.** Photographs uploaded at `/admin` get their evening version there; the seed set's pairs are still declared in `src/lib/seed.ts`.
 - **The monograph PDF is a snapshot.** Request a copy on `/monograph` hands out `public/monograph/iconic-volume-i.pdf`, printed from the book's own pages (at `/monograph/print`, which nothing links to) so it matches the site page for page. It does not follow edits by itself: after changing the monograph or its projects at `/admin`, run `node scripts/build-monograph-pdf.mjs` and deploy. For now it includes the seven stock-photo placeholder projects, like the book on the site.
-- **Weight.** The film frames total about 21 MB on disk, but a visitor downloads one walkthrough set — 9.1 MB on a computer, 5.3 MB on a phone — plus 6.7 MB for the two build clips, and only every second frame when the browser asks to save data or the connection is slow. The 3D assets are about 13 MB (including a 1.6 MB lighting HDRI). Both load only when their section comes near, and the films load coarse frames first.
+- **Weight.** The heavy assets went with the house page: 31.5 MB of film frames and 3D models. What is left is photography, which Next serves resized and in modern formats, and the 4 MB monograph PDF, which only downloads when a visitor asks for a copy.
 - **No test suite** beyond type-checking, linting, `scripts/scroll-test.mjs` and the screenshot scripts.

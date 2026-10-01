@@ -5,13 +5,14 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
+// The rooms screen (X-950) is left out: it edits the retired house page. The
+// screen and its records are untouched, so it can come back with that page.
 export const DESK = [
   { href: "/admin", label: "Overview", sheet: "X-900" },
   { href: "/admin/projects", label: "Projects", sheet: "X-910" },
   { href: "/admin/media", label: "Photographs", sheet: "X-920" },
   { href: "/admin/reviews", label: "Reviews", sheet: "X-930" },
   { href: "/admin/monograph", label: "Monograph", sheet: "X-940" },
-  { href: "/admin/walkthrough", label: "Rooms", sheet: "X-950" },
   { href: "/admin/enquiries", label: "Enquiries", sheet: "X-960" },
   { href: "/admin/settings", label: "Settings", sheet: "X-970" },
 ];

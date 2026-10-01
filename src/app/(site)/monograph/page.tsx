@@ -26,7 +26,7 @@ export default async function MonographPage() {
   return (
     <>
       <PageHeader
-        sheet="04"
+        sheet="03"
         eyebrow="The monograph"
         title={
           <>
