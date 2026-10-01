@@ -200,8 +200,8 @@ export default function HeroCinema({ slides, lead }: { slides: HeroSlide[]; lead
             className="mb-5 h-[clamp(2.1rem,min(4.6vw,5.6vh),3.6rem)] w-auto md:mb-7"
           />
 
-          <p data-hero-fade className="eyebrow mb-5 max-w-[22ch] text-balance text-bone/70 md:mb-7 md:max-w-none">
-            Architecture Design · Landscape · Interior
+          <p data-hero-fade className="eyebrow mb-5 text-balance text-bone/70 md:mb-7">
+            Architecture Design&nbsp;· Landscape&nbsp;· Interior
           </p>
 
           <h1 className="text-[clamp(2.8rem,min(10vw,16vh),9rem)] leading-[0.86] tracking-[-0.025em]">
