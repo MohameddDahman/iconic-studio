@@ -5,7 +5,6 @@ import DayNight from "@/components/site/DayNight";
 import FeaturedWork from "@/components/site/FeaturedWork";
 import HouseTeaser from "@/components/site/HouseTeaser";
 import ProcessSteps from "@/components/site/ProcessSteps";
-import Testimonials from "@/components/site/Testimonials";
 import MonographTeaser from "@/components/site/MonographTeaser";
 import { DISCIPLINES, STAGES } from "@/lib/practice";
 import { getFeaturedProjects, getProjects, getSpreads, getTestimonials } from "@/lib/content";
@@ -74,7 +73,7 @@ export default async function HomePage() {
     <>
       <HeroCinema
         slides={slides}
-        lead="An interior design and execution studio in Alexandria — homes, workplaces, restaurants, hotels and clinics, from the first sketch to the final styling."
+        lead="An architecture, landscape and interior design studio in Alexandria — homes, workplaces, restaurants, hotels and clinics, from the first sketch to the final styling."
       />
       <IntroStatement
         statement="We design interiors where the light, the materials and the way you move through a room all agree — then our own team builds them, so the room you approved is exactly the room you walk into."
@@ -92,7 +91,6 @@ export default async function HomePage() {
       <FeaturedWork projects={featured} total={projects.length} />
       <HouseTeaser />
       <ProcessSteps stages={STAGES} />
-      <Testimonials items={testimonials} />
       <MonographTeaser spreads={spreads} />
     </>
   );

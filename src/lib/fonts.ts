@@ -1,4 +1,10 @@
-import { Instrument_Serif, Mona_Sans, Geist_Mono, IBM_Plex_Sans_Arabic } from "next/font/google";
+import {
+  Instrument_Serif,
+  Mona_Sans,
+  Geist_Mono,
+  IBM_Plex_Sans_Arabic,
+  Dancing_Script,
+} from "next/font/google";
 
 /**
  * Display — Instrument Serif.
@@ -45,4 +51,15 @@ export const arabic = IBM_Plex_Sans_Arabic({
   weight: ["300", "400", "500"],
 });
 
-export const fontClassNames = [display.variable, text.variable, mono.variable, arabic.variable].join(" ");
+/**
+ * The hand in the studio's slogan — your space, our signature. One word is set
+ * in it, so the line reads the way it does on the studio's own artwork.
+ */
+export const script = Dancing_Script({
+  subsets: ["latin"],
+  weight: "600",
+  display: "swap",
+  variable: "--font-script",
+});
+
+export const fontClassNames = [display.variable, text.variable, mono.variable, arabic.variable, script.variable].join(" ");

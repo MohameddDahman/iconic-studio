@@ -9,7 +9,7 @@ export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "How to reach Iconic — interior design, decor and execution in Alexandria.",
+  description: "How to reach Iconic — architecture, landscape and interior design in Alexandria.",
 };
 
 const NEXT_STEPS = [
@@ -34,7 +34,7 @@ export default async function ContactPage() {
   return (
     <>
       <PageHeader
-        sheet="06"
+        sheet="07"
         eyebrow="Contact"
         title={
           <>

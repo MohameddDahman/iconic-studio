@@ -7,6 +7,8 @@ import { gsap, prefersReducedMotion } from "@/lib/gsap";
 import TransitionLink from "@/components/motion/TransitionLink";
 import { cn } from "@/lib/utils";
 import type { Media } from "@/lib/types";
+import { STUDIO } from "@/lib/routes";
+import mark from "../../../public/brand/iconic-mark.png";
 
 export interface HeroSlide {
   media: Media;
@@ -188,19 +190,29 @@ export default function HeroCinema({ slides, lead }: { slides: HeroSlide[]; lead
 
       <div ref={contentRef} className="relative z-20 flex h-full flex-col justify-end">
         <div className="sheet pb-8 md:pb-12">
-          <p data-hero-fade className="eyebrow mb-6 text-bone/70 md:mb-8">
-            Interior design · Decor · Execution
+          <Image
+            src={mark}
+            alt={STUDIO.legalName}
+            data-hero-fade
+            preload
+            sizes="(min-width: 768px) 15rem, 45vw"
+            className="mb-6 h-auto w-[clamp(8rem,15vw,14rem)] md:mb-8"
+          />
+
+          <p data-hero-fade className="eyebrow mb-7 max-w-[22ch] text-balance text-bone/70 md:mb-9 md:max-w-none">
+            Architecture Design · Landscape · Interior
           </p>
 
-          <h1 className="inked text-d1 leading-[0.84] tracking-[-0.035em]">
+          <h1 className="text-d1 leading-[0.86] tracking-[-0.025em]">
             <span className="block overflow-hidden pb-[0.07em]">
-              <span data-hero-line className="block">
-                Interiors,
+              <span data-hero-line className="condensed block font-[760] uppercase">
+                Your space
               </span>
             </span>
-            <span className="block overflow-hidden pb-[0.07em]">
+            <span className="block overflow-hidden pb-[0.16em]">
               <span data-hero-line className="block">
-                <em className="text-glow">designed</em> &amp; built.
+                <span className="condensed font-[760] uppercase">Our</span>{" "}
+                <span className="font-script text-glow">signature</span>
               </span>
             </span>
           </h1>

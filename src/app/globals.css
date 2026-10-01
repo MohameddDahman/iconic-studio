@@ -27,6 +27,7 @@
   --font-text: var(--font-text), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-mono), ui-monospace, monospace;
   --font-arabic: var(--font-arabic), var(--font-text), sans-serif;
+  --font-script: var(--font-script), "Segoe Script", cursive;
 
   /* --- Type scale ------------------------------------------------------- */
   --text-micro: 0.6875rem;

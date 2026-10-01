@@ -19,7 +19,7 @@ import type { Project, Spread, StudioSettings, Testimonial, Threshold } from "./
 
 export const SEED_SETTINGS: StudioSettings = {
   name: "Iconic",
-  tagline: "Interiors, decor & execution",
+  tagline: "Architecture design, landscape and interior",
   intro:
     "Iconic is an interior design and execution studio. We design homes, workplaces, restaurants, hotels and clinics — then build them with our own site team, so the finished room is the room that was drawn.",
   email: "",

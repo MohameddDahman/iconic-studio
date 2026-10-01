@@ -2,7 +2,15 @@
  * The site map. `sheet` is the two-digit index shown in the navigation, the
  * footer and the page transition.
  */
-export type SheetKey = "home" | "projects" | "services" | "inside" | "monograph" | "studio" | "contact";
+export type SheetKey =
+  | "home"
+  | "projects"
+  | "services"
+  | "inside"
+  | "monograph"
+  | "studio"
+  | "reviews"
+  | "contact";
 
 export interface Sheet {
   key: SheetKey;
@@ -19,7 +27,8 @@ export const SHEETS: Sheet[] = [
   { key: "inside", href: "/inside", label: "The House", sheet: "03", title: "Walk through the house" },
   { key: "monograph", href: "/monograph", label: "Monograph", sheet: "04", title: "The book" },
   { key: "studio", href: "/studio", label: "Studio", sheet: "05", title: "The studio" },
-  { key: "contact", href: "/contact", label: "Contact", sheet: "06", title: "Start a project" },
+  { key: "reviews", href: "/reviews", label: "Reviews", sheet: "06", title: "Client reviews" },
+  { key: "contact", href: "/contact", label: "Contact", sheet: "07", title: "Start a project" },
 ];
 
 /** The nav omits home — the wordmark already goes there. */
@@ -43,7 +52,7 @@ export function sheetForPath(pathname: string): Sheet {
 export const STUDIO = {
   name: "Iconic",
   legalName: "Iconic Architecture Design",
-  tagline: "Interiors, decor & execution",
+  tagline: "Architecture design, landscape and interior",
   principal: "Eng. Ahmed Fawzy",
   instagram: "iconic_architecture_design",
   instagramUrl: "https://instagram.com/iconic_architecture_design",

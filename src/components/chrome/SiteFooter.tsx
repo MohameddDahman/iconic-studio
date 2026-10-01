@@ -161,7 +161,7 @@ export default async function SiteFooter() {
         <p className="annotation">
           © {year} {STUDIO.legalName}
         </p>
-        <p className="annotation">Interior design · Decor · Execution</p>
+        <p className="annotation">Architecture Design · Landscape · Interior</p>
       </div>
     </footer>
   );

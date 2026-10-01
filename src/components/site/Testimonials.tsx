@@ -11,9 +11,12 @@ import type { Testimonial } from "@/lib/types";
 export default function Testimonials({
   items,
   index = "(07)",
+  showHeading = true,
 }: {
   items: Testimonial[];
   index?: string;
+  /** Off on the reviews page, where the page header already names them. */
+  showHeading?: boolean;
   /** Every review is always shown; kept so older call sites still type-check. */
   showAll?: boolean;
 }) {
@@ -26,17 +29,19 @@ export default function Testimonials({
   return (
     <section data-surface="day" className="bg-surface py-[var(--spacing-bay-lg)] text-on-surface">
       <div className="sheet">
-        <div className="grid gap-10 border-b border-rule pb-12 lg:grid-cols-12 lg:items-end">
-          <div className="lg:col-span-7">
-            <p className="eyebrow mb-8 text-accent">{index} Clients</p>
-            <SplitHeading className="inked text-d2 leading-[0.95] tracking-[-0.02em]">
-              In their <em>own words.</em>
-            </SplitHeading>
+        {showHeading && (
+          <div className="grid gap-10 border-b border-rule pb-12 lg:grid-cols-12 lg:items-end">
+            <div className="lg:col-span-7">
+              <p className="eyebrow mb-8 text-accent">{index} Clients</p>
+              <SplitHeading className="inked text-d2 leading-[0.95] tracking-[-0.02em]">
+                In their <em>own words.</em>
+              </SplitHeading>
+            </div>
+            <p className="annotation text-on-surface-faint lg:col-span-4 lg:col-start-9 lg:text-right">
+              {String(items.length).padStart(2, "0")} reviews · left on the studio&rsquo;s page
+            </p>
           </div>
-          <p className="annotation text-on-surface-faint lg:col-span-4 lg:col-start-9 lg:text-right">
-            {String(items.length).padStart(2, "0")} reviews · left on the studio&rsquo;s page
-          </p>
-        </div>
+        )}
 
         <Reveal as="figure" className="grid gap-8 py-16 md:py-20 lg:grid-cols-12 lg:gap-10">
           <span aria-hidden="true" className="inked text-[7rem] leading-[0.7] text-accent lg:col-span-1 lg:text-[9rem]">

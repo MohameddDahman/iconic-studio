@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import PageHeader from "@/components/site/PageHeader";
 import ProcessSteps from "@/components/site/ProcessSteps";
-import Testimonials from "@/components/site/Testimonials";
 import CtaLink from "@/components/site/CtaLink";
 import SplitHeading from "@/components/motion/SplitHeading";
 import { Reveal, RevealImage } from "@/components/motion/Reveal";
@@ -10,7 +9,7 @@ import { STAGES } from "@/lib/practice";
 import { STUDIO } from "@/lib/routes";
 import { img } from "@/lib/media";
 import credits from "@/lib/media-credits.json";
-import { getSettings, getTestimonials } from "@/lib/content";
+import { getSettings } from "@/lib/content";
 
 export const revalidate = 60;
 
@@ -38,7 +37,7 @@ const PRINCIPLES = [
 ];
 
 export default async function StudioPage() {
-  const [settings, testimonials] = await Promise.all([getSettings(), getTestimonials()]);
+  const settings = await getSettings();
 
   const drawing = img("stock/drafting-00.jpg", "Hands drawing a floor plan with a scale ruler");
   const board = img("stock/material-29.jpg", "A material board with fabric swatches, a book and a glass vase");
@@ -145,8 +144,6 @@ export default async function StudioPage() {
       </section>
 
       <ProcessSteps stages={STAGES} index="(03)" />
-
-      <Testimonials items={testimonials} index="(04)" />
 
       <section data-surface="day" className="bg-surface pb-[var(--spacing-bay)] text-on-surface">
         <div className="sheet flex flex-col gap-10 border-t border-rule pt-12 md:flex-row md:items-end md:justify-between">
