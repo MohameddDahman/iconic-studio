@@ -103,7 +103,7 @@ After that they sign in at <https://iconic-architecture.vercel.app/admin> with t
 
 - [x] The studio's own projects are on the site, so the seven stock-photo placeholders never show — they only stand in while nothing is published
 - [ ] The monograph still runs on the imported sample spreads, so the book shows that stock work. Curate the spreads at `/admin` → Monograph, then print the PDF again (`node scripts/build-monograph-pdf.mjs`)
-- [ ] Keep the full-size exports of the studio's renders somewhere safe. The desk uploads a web copy of each (2048px WebP), not the original
+- [ ] Keep the full-size exports of the studio's renders somewhere safe. The desk uploads a web copy of each (1920px WebP), not the original
 - [ ] Confirm project titles, descriptions and the services copy
 - [x] Real phone, WhatsApp, address, map and links in `/admin` → Settings — add an email there if the studio wants one on the site
 - [ ] Add the studio's domain in Vercel, set `NEXT_PUBLIC_SITE_URL` there and `SITE_URL` on production Convex to match, and add an OG image
@@ -125,7 +125,7 @@ Without `--replace` the import stops rather than writing over rows that already 
 ## 8. Known limitations
 
 - **Where it is deployed.** The site is on Vercel (project `iconic-studio`, <https://iconic-architecture.vercel.app>), built from <https://github.com/MohameddDahman/iconic-studio>. `npx vercel deploy --prod` publishes again from this folder.
-- **Convex free plan: 1 GB of file storage.** Photographs are resized in the browser on upload, to 2048px on the long edge at quality 85, so a photograph is usually 150-800 KB. The desk's Photographs screen lists what each one costs. The desk is tested end to end on a throwaway local Convex backend, never with the live account.
+- **Convex free plan: 1 GB of file storage.** Photographs are resized in the browser on upload, to 1920px on the long edge at WebP quality 78, so a photograph is usually 100-400 KB. The desk's Photographs screen lists what each one costs. The desk is tested end to end on a throwaway local Convex backend, never with the live account.
 - **Password resets go through the developer.** There is no email provider, so for a forgotten password delete that person's row in `authAccounts` in the Convex dashboard, then run `node scripts/create-desk-account.mjs` for them again.
 - **The seed content's evening pairs stay in code.** Photographs uploaded at `/admin` get their evening version there; the seed set's pairs are still declared in `src/lib/seed.ts`.
 - **The monograph PDF is a snapshot.** Request a copy on `/monograph` hands out `public/monograph/iconic-volume-i.pdf`, printed from the book's own pages (at `/monograph/print`, which nothing links to) so it matches the site page for page. It does not follow edits by itself: after changing the monograph or its projects at `/admin`, run `node scripts/build-monograph-pdf.mjs` and deploy. For now it includes the seven stock-photo placeholder projects, like the book on the site.

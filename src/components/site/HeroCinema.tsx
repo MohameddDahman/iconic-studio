@@ -40,6 +40,14 @@ export default function HeroCinema({ slides, lead }: { slides: HeroSlide[]; lead
   const [inView, setInView] = useState(true);
   const count = slides.length;
 
+  // A full-width photograph is the heaviest thing on the page, so only the one
+  // on show and the one after it are fetched; the rest wait their turn.
+  const [reached, setReached] = useState(() => new Set([0, 1]));
+  const following = (index + 1) % count;
+  if (!reached.has(index) || !reached.has(following)) {
+    setReached(new Set([...reached, index, following]));
+  }
+
   useEffect(() => {
     const el = rootRef.current;
     if (!el) return;
@@ -167,17 +175,19 @@ export default function HeroCinema({ slides, lead }: { slides: HeroSlide[]; lead
           >
             <div data-move className="absolute inset-0">
               <div data-kb className="absolute inset-0 will-change-transform">
-                <Image
-                  src={slide.media.src}
-                  alt={slide.media.alt}
-                  fill
-                  sizes="100vw"
-                  quality={85}
-                  preload={i === 0}
-                  placeholder={slide.media.blurDataURL ? "blur" : "empty"}
-                  blurDataURL={slide.media.blurDataURL}
-                  className="object-cover"
-                />
+                {reached.has(i) && (
+                  <Image
+                    src={slide.media.src}
+                    alt={slide.media.alt}
+                    fill
+                    sizes="100vw"
+                    quality={80}
+                    preload={i === 0}
+                    placeholder={slide.media.blurDataURL ? "blur" : "empty"}
+                    blurDataURL={slide.media.blurDataURL}
+                    className="object-cover"
+                  />
+                )}
               </div>
             </div>
           </div>

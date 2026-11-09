@@ -22,7 +22,7 @@ export default function PairedImage({
   sizes,
   className,
   imageClassName,
-  quality = 85,
+  quality = 80,
   preload = false,
   lamp = { x: 86, y: 14 },
   showSwitch = true,

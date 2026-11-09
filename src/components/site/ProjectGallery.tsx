@@ -36,7 +36,7 @@ export default function ProjectGallery({ images }: { images: Media[] }) {
                   alt={media.alt}
                   fill
                   sizes="(min-width: 1024px) 16vw, (min-width: 640px) 25vw, 33vw"
-                  quality={70}
+                  quality={60}
                   placeholder={media.blurDataURL ? "blur" : "empty"}
                   blurDataURL={media.blurDataURL}
                   className="object-cover transition-transform duration-700 ease-cut group-hover:scale-105"
@@ -154,7 +154,8 @@ function PhotoViewer({
                   src={media.src}
                   alt={i === index ? media.alt : ""}
                   fill
-                  sizes={`min(100vw, ${Math.ceil((media.width / media.height) * 100)}vh)`}
+                  // Limited by the height of the screen as often as by its width.
+                  sizes={`min(100vw, ${Math.ceil((media.width / media.height) * 86)}vh)`}
                   quality={80}
                   loading="eager"
                   placeholder={media.blurDataURL ? "blur" : "empty"}

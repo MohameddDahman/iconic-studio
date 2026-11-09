@@ -135,7 +135,7 @@ export default function FeaturedWork({ projects, total }: { projects: Project[];
                   fill
                   draggable={false}
                   sizes="(min-width: 1280px) 26vw, (min-width: 1024px) 30vw, (min-width: 640px) 44vw, 78vw"
-                  quality={80}
+                  quality={72}
                   placeholder={project.cover.blurDataURL ? "blur" : "empty"}
                   blurDataURL={project.cover.blurDataURL}
                   className="object-cover transition-transform duration-[1400ms] ease-settle group-hover:scale-[1.05]"

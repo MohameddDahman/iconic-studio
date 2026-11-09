@@ -132,13 +132,13 @@ function Photo({
   media,
   sizes,
   eager,
-  quality = 80,
+  quality = 72,
   className,
 }: {
   media: Media;
   sizes: string;
   eager: boolean;
-  quality?: 70 | 80 | 85;
+  quality?: 60 | 72 | 80;
   className?: string;
 }) {
   return (
@@ -272,7 +272,7 @@ function OpenerSheet({ page, side, eager }: { page: Of<"opener">; side: Side; ea
               media={inset}
               sizes="160px"
               eager={eager}
-              quality={70}
+              quality={60}
               className="aspect-[3/4] w-full @max-sm:hidden"
             />
           )}
@@ -335,7 +335,7 @@ function PlateSheet({ page, eager }: { page: Of<"plate">; eager: boolean }) {
         media={page.media}
         sizes="(min-width: 900px) 600px, 92vw"
         eager={eager}
-        quality={85}
+        quality={80}
         className="absolute inset-0"
       />
       <span
@@ -1030,7 +1030,7 @@ export default function BookVolume({ pages, studio }: { pages: BookPage[]; studi
                         alt=""
                         fill
                         sizes="96px"
-                        quality={70}
+                        quality={60}
                         className="object-cover"
                       />
                     ) : (

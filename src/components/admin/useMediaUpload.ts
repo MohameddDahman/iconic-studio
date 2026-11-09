@@ -15,10 +15,10 @@ export interface UploadItem {
 }
 
 /** The longest edge worth keeping: enough for a full-width photograph on a large screen. */
-const MAX_EDGE = 2048;
-const QUALITY = 0.85;
+const MAX_EDGE = 1920;
+const QUALITY = 0.78;
 /** Anything already this small, and no wider than MAX_EDGE, is left exactly as it came. */
-const KEEP_BELOW = 300_000;
+const KEEP_BELOW = 150_000;
 
 const encode = (canvas: HTMLCanvasElement, type: string) =>
   new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, type, QUALITY));

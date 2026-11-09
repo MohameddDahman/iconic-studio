@@ -140,7 +140,7 @@ export default function ProjectIndex({ projects }: { projects: Project[] }) {
                       alt={project.cover.alt}
                       fill
                       sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                      quality={80}
+                      quality={72}
                       placeholder={project.cover.blurDataURL ? "blur" : "empty"}
                       blurDataURL={project.cover.blurDataURL}
                       className="object-cover transition-transform duration-[1400ms] ease-settle group-hover:scale-[1.05]"

@@ -192,7 +192,7 @@ export function DeskPhoto({ src, alt, sizes = "260px" }: { src: string; alt: str
       alt={alt}
       fill
       sizes={sizes}
-      quality={70}
+      quality={60}
       unoptimized={!canOptimise(src)}
       className="object-cover"
     />

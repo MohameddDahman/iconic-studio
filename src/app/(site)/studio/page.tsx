@@ -68,7 +68,7 @@ export default async function StudioPage() {
                 alt={drawing.alt}
                 fill
                 sizes="(min-width: 1024px) 42vw, 100vw"
-                quality={80}
+                quality={72}
                 placeholder={drawing.blurDataURL ? "blur" : "empty"}
                 blurDataURL={drawing.blurDataURL}
                 className="object-cover"
@@ -128,7 +128,7 @@ export default async function StudioPage() {
               alt={board.alt}
               fill
               sizes="100vw"
-              quality={80}
+              quality={72}
               placeholder={board.blurDataURL ? "blur" : "empty"}
               blurDataURL={board.blurDataURL}
               className="object-cover"

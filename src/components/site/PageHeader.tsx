@@ -39,7 +39,7 @@ export default function PageHeader({
             fill
             preload
             sizes="100vw"
-            quality={80}
+            quality={72}
             placeholder={media.blurDataURL ? "blur" : "empty"}
             blurDataURL={media.blurDataURL}
             className="object-cover opacity-45"

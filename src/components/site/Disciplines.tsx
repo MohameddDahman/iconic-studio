@@ -77,7 +77,7 @@ export default function Disciplines({ items }: { items: Discipline[] }) {
                         alt=""
                         fill
                         sizes="56px"
-                        quality={70}
+                        quality={60}
                         className="object-cover"
                       />
                     </span>
@@ -114,7 +114,7 @@ export default function Disciplines({ items }: { items: Discipline[] }) {
                       alt={d.media.alt}
                       fill
                       sizes="(min-width: 1024px) 40vw, 1px"
-                      quality={80}
+                      quality={72}
                       placeholder={d.media.blurDataURL ? "blur" : "empty"}
                       blurDataURL={d.media.blurDataURL}
                       className={cn(
