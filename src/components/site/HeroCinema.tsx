@@ -258,7 +258,7 @@ export default function HeroCinema({ slides, lead }: { slides: HeroSlide[]; lead
               ))}
             </div>
 
-            <ol className="flex gap-3 pr-14 md:col-span-3 md:col-start-10 lg:pr-10">
+            <ol className="flex gap-3 pr-14 md:col-span-3 md:col-start-10 xl:pr-10">
               {slides.map((slide, i) => (
                 <li key={slide.media.src} className="flex-1">
                   <button
