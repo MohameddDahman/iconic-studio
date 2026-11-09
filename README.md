@@ -74,7 +74,6 @@ Each collection falls back independently:
 | Projects | `SEED_PROJECTS` | one project is published |
 | Reviews | `SEED_TESTIMONIALS` | one review is published |
 | Monograph spreads | `SEED_SPREADS` | one spread is published |
-| House rooms | `SEED_THRESHOLDS` | one room is published |
 | Studio details | `SEED_SETTINGS` | settings are saved once |
 
 Public pages are server-rendered from Convex over HTTP and revalidate every 60 seconds. Only `/admin` uses the reactive client.
@@ -85,7 +84,7 @@ Public pages are server-rendered from Convex over HTTP and revalidate every 60 s
 |---|---|
 | `/` | The studio logo and slogan over a film-title hero reel, studio statement, services index, day/evening lamp showcase, a swipeable project strip, process, monograph |
 | `/projects` | Portfolio with sector filters (animated with GSAP Flip) and a grid/list view |
-| `/projects/[slug]` | Case study: hero (with the lamp switch when the project has evening renders), facts, statement, gallery |
+| `/projects/[slug]` | Case study: hero (with the lamp switch when the project has evening renders), facts, statement, a grid of square thumbnails that open a full-screen viewer |
 | `/services` | Every discipline in full, process, questions |
 | `/monograph` | The work as a book with page-turn animation, and the same book as a PDF to keep |
 | `/reviews` | Every client recommendation, Arabic as written with an English reading beneath |
@@ -101,7 +100,7 @@ Public pages are server-rendered from Convex over HTTP and revalidate every 60 s
 | `node scripts/scroll-test.mjs [base] [routes…]` | Wheel-scroll test: each notch must move the page exactly one notch, with no height changes and no drift |
 | `node scripts/create-desk-account.mjs [--prod]` | Makes a studio desk account for an allowed address, asking for the password at the prompt. The site has no sign-up. |
 | `node scripts/build-monograph-pdf.mjs [base]` | Prints the monograph, page for page, into `public/monograph/iconic-volume-i.pdf`, the copy behind the monograph page's Request a copy. Prints from the live site unless given a base URL. Run it after changing the monograph or its projects, then deploy |
-| `node scripts/import-seed.mjs [--prod] [--replace]` | Uploads the bundled photographs to Convex and rebuilds the seed projects, rooms, spreads, reviews and settings there, so the studio desk can edit them |
+| `node scripts/import-seed.mjs [--prod] [--replace]` | Uploads the bundled photographs to Convex and rebuilds the seed projects, spreads, reviews and settings there, so the studio desk can edit them |
 | `node scripts/extract-film-frames.mjs <video> <out> [--fps] [--every] [--width] [--end] [--crop] [--portrait]` | Turns a video into a silent WebP frame sequence for a scroll film (decoded by Edge, no ffmpeg needed). Nothing uses it at the moment — the films went with the house page — but it is how a film would be prepared |
 | `node scripts/shots.mjs [--mobile] [--full]` | Screenshots every route into `.shots/` |
 | `node scripts/shot-scroll.mjs <route> <depths…>` | Screenshots one route at given scroll depths |

@@ -33,6 +33,7 @@ export default function HeroCinema({ slides, lead }: { slides: HeroSlide[]; lead
   const stageRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const barsRef = useRef<HTMLSpanElement[]>([]);
+  const timerRef = useRef<ReturnType<typeof gsap.fromTo> | null>(null);
   const prevRef = useRef(0);
 
   const [index, setIndex] = useState(0);
@@ -127,20 +128,20 @@ export default function HeroCinema({ slides, lead }: { slides: HeroSlide[]; lead
   /* The timer is the progress bar itself, so the two can never disagree. */
   useGSAP(
     () => {
+      // Without this, the last photograph's timer keeps running and cuts the next one short.
+      timerRef.current?.kill();
+      timerRef.current = null;
       if (!inView || count < 2 || prefersReducedMotion()) return;
       barsRef.current.forEach((bar, i) => {
         if (bar && i !== index) gsap.set(bar, { scaleX: i < index ? 1 : 0 });
       });
       const bar = barsRef.current[index];
       if (!bar) return;
-      const tween = gsap.fromTo(
+      timerRef.current = gsap.fromTo(
         bar,
         { scaleX: 0 },
         { scaleX: 1, duration: HOLD, ease: "none", onComplete: () => setIndex((i) => (i + 1) % count) },
       );
-      return () => {
-        tween.kill();
-      };
     },
     { dependencies: [index, inView, count] },
   );
@@ -150,7 +151,7 @@ export default function HeroCinema({ slides, lead }: { slides: HeroSlide[]; lead
       ref={rootRef}
       data-surface="night"
       aria-roledescription="carousel"
-      aria-label="Selected interiors"
+      aria-label="Selected projects"
       className="relative h-[100svh] min-h-[640px] overflow-hidden bg-night text-bone"
     >
       <div ref={stageRef} className="absolute inset-0 will-change-transform">
@@ -247,7 +248,7 @@ export default function HeroCinema({ slides, lead }: { slides: HeroSlide[]; lead
               ))}
             </div>
 
-            <ol className="flex gap-3 md:col-span-3 md:col-start-10">
+            <ol className="flex gap-3 pr-14 md:col-span-3 md:col-start-10 lg:pr-10">
               {slides.map((slide, i) => (
                 <li key={slide.media.src} className="flex-1">
                   <button

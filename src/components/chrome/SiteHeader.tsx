@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useGSAP } from "@gsap/react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import TransitionLink from "@/components/motion/TransitionLink";
+import Wordmark from "@/components/chrome/Wordmark";
 import { NAV_SHEETS, STUDIO } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 
@@ -169,15 +170,7 @@ export default function SiteHeader() {
       >
         <div className="sheet flex h-[4.5rem] items-center justify-between gap-6 md:h-20">
           <TransitionLink href="/" className="group flex flex-col gap-1.5" aria-label={`${STUDIO.legalName} — home`}>
-            {/*
-              The word out of the studio logo, drawn as a shape rather than a picture,
-              so it takes the colour of whatever section is under the header — light on
-              the dark ones, ink on the pale ones — the way the old wordmark did.
-            */}
-            <span
-              aria-hidden="true"
-              className="block h-8 w-[5.33rem] bg-current transition-transform duration-700 ease-cut [-webkit-mask-image:url(/brand/iconic-word.png)] [-webkit-mask-position:left_center] [-webkit-mask-repeat:no-repeat] [-webkit-mask-size:contain] [mask-image:url(/brand/iconic-word.png)] [mask-position:left_center] [mask-repeat:no-repeat] [mask-size:contain] group-hover:-translate-y-px md:h-9 md:w-[6rem]"
-            />
+            <Wordmark className="h-8 w-[5.33rem] transition-transform duration-700 ease-cut group-hover:-translate-y-px md:h-9 md:w-[6rem]" />
             <span className="eyebrow hidden text-[0.5rem] tracking-[0.2em] whitespace-nowrap text-on-surface-faint sm:block">
               Architecture Design - Landscape And Interior
             </span>

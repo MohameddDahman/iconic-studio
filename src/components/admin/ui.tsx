@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import Image from "next/image";
 import { ConvexError } from "convex/values";
 import { cn } from "@/lib/utils";
 
@@ -154,7 +155,7 @@ export function Notice({
   );
 }
 
-/** A small state label: Live, Draft, Evening, Seed content. */
+/** A small state label: Live, Draft, Evening, Sample content. */
 export function Chip({
   children,
   tone = "muted",
@@ -176,24 +177,46 @@ export function Chip({
   );
 }
 
+/** Only photographs held in Convex storage can go through the image optimiser. */
+const canOptimise = (src: string) => /\.convex\.(cloud|site)\//.test(src);
+
+/**
+ * A photograph on the desk. The originals run to several megabytes each, so a
+ * page of them would download gigabytes just to draw thumbnails; this asks for
+ * a copy the size it is actually shown at. It fills its positioned parent.
+ */
+export function DeskPhoto({ src, alt, sizes = "260px" }: { src: string; alt: string; sizes?: string }) {
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      fill
+      sizes={sizes}
+      quality={70}
+      unoptimized={!canOptimise(src)}
+      className="object-cover"
+    />
+  );
+}
+
 /** A photograph thumbnail, with an optional label in its corner. */
 export function Thumb({
   src,
   alt = "",
   badge,
   className,
+  sizes,
 }: {
   src?: string | null;
   alt?: string;
   badge?: ReactNode;
   className?: string;
+  /** How wide it is drawn, so the smallest copy that looks sharp is fetched. */
+  sizes?: string;
 }) {
   return (
     <div className={cn("relative aspect-[4/3] overflow-hidden border border-rule bg-surface-raised", className)}>
-      {src && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={src} alt={alt} className="h-full w-full object-cover" />
-      )}
+      {src && <DeskPhoto src={src} alt={alt} sizes={sizes} />}
       {badge && (
         <span className="annotation absolute top-1.5 left-1.5 bg-night/85 px-1.5 py-0.5 text-accent">
           {badge}
@@ -210,7 +233,11 @@ export function describeError(error: unknown) {
   }
   if (error instanceof Error) {
     const uncaught = error.message.match(/Uncaught (?:Convex)?Error: ([^\n]+)/);
-    return (uncaught ? uncaught[1] : error.message.split("\n")[0]).trim();
+    if (uncaught) return uncaught[1].trim();
+    // Convex keeps the real reason from the browser on a live deployment, and
+    // "[Request ID: 1a2b] Server Error" tells nobody what to do next.
+    if (/Server Error/.test(error.message)) return "That didn’t go through. Check your connection and try again.";
+    return error.message.split("\n")[0].trim();
   }
   return "Something went wrong. Try again.";
 }
@@ -253,15 +280,31 @@ export function useRun() {
   return { run, busy, error, done, clearError };
 }
 
-/** Ask before the tab is closed or reloaded while there are unsaved changes. */
+/** How many editors on the page are holding changes that have not been saved. */
+let unsaved = 0;
+
+/**
+ * Before moving to another section of the desk. Those moves swap the page
+ * without a reload, so the browser's own warning never fires for them. True when
+ * there is nothing to lose, or the person has agreed to lose it.
+ */
+export function confirmLeaving() {
+  return unsaved === 0 || window.confirm("You have unsaved changes. Leave without saving them?");
+}
+
+/** Ask before the tab is closed, reloaded or moved to another desk section with unsaved changes. */
 export function useLeaveWarning(dirty: boolean) {
   useEffect(() => {
     if (!dirty) return;
+    unsaved += 1;
     const warn = (event: BeforeUnloadEvent) => {
       event.preventDefault();
       event.returnValue = "";
     };
     window.addEventListener("beforeunload", warn);
-    return () => window.removeEventListener("beforeunload", warn);
+    return () => {
+      unsaved -= 1;
+      window.removeEventListener("beforeunload", warn);
+    };
   }, [dirty]);
 }

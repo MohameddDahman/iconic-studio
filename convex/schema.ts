@@ -96,19 +96,6 @@ export default defineSchema({
     order: v.number(),
   }).index("by_published_order", ["published", "order"]),
 
-  /** The rooms listed at /inside, in order. */
-  thresholds: defineTable({
-    room: v.string(),
-    ceiling: v.string(),
-    note: v.string(),
-    mediaId: v.optional(v.id("media")),
-    /** Position on the first walkthrough's ceiling plan. No longer edited or shown. */
-    planX: v.optional(v.number()),
-    planY: v.optional(v.number()),
-    published: v.boolean(),
-    order: v.number(),
-  }).index("by_published_order", ["published", "order"]),
-
   /** Singleton — there is only ever one row, fetched with .first(). */
   settings: defineTable({
     name: v.string(),
@@ -123,16 +110,4 @@ export default defineSchema({
     mapUrl: v.optional(v.string()),
     links: v.optional(v.array(v.object({ label: v.string(), url: v.string() }))),
   }),
-
-  inquiries: defineTable({
-    name: v.string(),
-    email: v.string(),
-    subject: v.string(),
-    /** The kind of space, picked on the contact form. */
-    space: v.optional(v.string()),
-    message: v.string(),
-    budget: v.optional(v.string()),
-    handled: v.boolean(),
-    createdAt: v.number(),
-  }).index("by_created", ["createdAt"]),
 });

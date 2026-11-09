@@ -6,9 +6,8 @@ import {
   SEED_SETTINGS,
   SEED_SPREADS,
   SEED_TESTIMONIALS,
-  SEED_THRESHOLDS,
 } from "./seed";
-import type { Media, Project, Spread, StudioLink, StudioSettings, Testimonial, Threshold } from "./types";
+import type { Media, Project, Spread, StudioLink, StudioSettings, Testimonial } from "./types";
 
 /**
  * The public site reads from Convex on the server, so pages arrive complete
@@ -36,7 +35,8 @@ const toMedia = (m: RemoteMedia, fallbackAlt = ""): Media | null =>
   m
     ? {
         src: m.src,
-        alt: m.alt || fallbackAlt,
+        // A file called 16.jpg leaves its number as the description; that helps nobody.
+        alt: /\p{L}/u.test(m.alt) ? m.alt : fallbackAlt,
         caption: m.caption,
         width: m.width,
         height: m.height,
@@ -73,7 +73,7 @@ export async function getProjects(): Promise<Project[]> {
 
   const projects = rows.flatMap((r: Record<string, unknown>): Project[] => {
     const gallery = ((r.gallery ?? []) as RemoteMedia[])
-      .map((g) => toMedia(g, String(r.title)))
+      .map((g, i) => toMedia(g, `${r.title}, photograph ${i + 1}`))
       .filter((m): m is Media => Boolean(m));
     // Without a single photograph a project would leave a hole in every layout,
     // so it stays off the site until it has one.
@@ -157,31 +157,6 @@ export async function getSpreads(): Promise<Spread[]> {
       };
     })
     .filter((s): s is Spread => Boolean(s));
-}
-
-/* ---- Walkthrough --------------------------------------------------------- */
-
-export async function getThresholds(): Promise<Threshold[]> {
-  const rows = await fromConvex(
-    () => client!.query(api.thresholds.listPublished, {}),
-    "thresholds.listPublished",
-  );
-  if (!rows || rows.length === 0) return SEED_THRESHOLDS;
-
-  return rows
-    .map((r: Record<string, unknown>): Threshold | null => {
-      const media = toMedia(r.media as RemoteMedia, String(r.room));
-      if (!media) return null;
-      return {
-        id: String(r._id),
-        room: String(r.room),
-        ceiling: String(r.ceiling),
-        note: String(r.note),
-        media,
-        plan: { x: Number(r.planX ?? 50), y: Number(r.planY ?? 32) },
-      };
-    })
-    .filter((t): t is Threshold => Boolean(t));
 }
 
 /* ---- Settings ------------------------------------------------------------ */

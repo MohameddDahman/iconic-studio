@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { fontClassNames } from "@/lib/fonts";
-import { STUDIO } from "@/lib/routes";
+import { SITE_URL, STUDIO } from "@/lib/routes";
 import ScrollSync from "@/components/motion/ScrollSync";
 import "./globals.css";
 
@@ -8,7 +8,7 @@ const description =
   "Iconic is an architecture, landscape and interior design studio in Alexandria that also builds what it draws — apartments and villas taken from the empty shell through drawings, joinery, lighting and site to finished rooms.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://iconic-architecture.vercel.app"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: `${STUDIO.name} — ${STUDIO.tagline}`,
     template: `%s — ${STUDIO.name}`,

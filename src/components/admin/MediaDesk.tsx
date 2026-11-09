@@ -9,7 +9,7 @@ export default function MediaDesk() {
       <DeskHeader
         sheet="X-920"
         title="Photographs"
-        lead="Every image the site can use. Upload the originals here — the size is measured on upload so pages never jump while a photograph loads."
+        lead="Every image the site can use. Each photograph is resized for the web as it uploads, so keep your full-size files somewhere safe."
       />
       <MediaLibrary />
     </>

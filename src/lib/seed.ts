@@ -1,5 +1,5 @@
 import { img } from "./media";
-import type { Project, Spread, StudioSettings, Testimonial, Threshold } from "./types";
+import type { Project, Spread, StudioSettings, Testimonial } from "./types";
 
 /* ---------------------------------------------------------------------------
  * SEED CONTENT
@@ -385,81 +385,6 @@ export const SEED_PROJECTS: Project[] = [
     ],
     featured: false,
     order: 11,
-  },
-];
-
-/* ---- /inside — rooms of the house ----------------------------------------
- * `id` matches a room in src/lib/house.ts. The walkthrough shows each room's
- * note and photograph when the camera reaches it. Rooms whose photograph has
- * an evening render switch with the lamp, just like the 3D lights do.
- * ------------------------------------------------------------------------ */
-
-export const SEED_THRESHOLDS: Threshold[] = [
-  {
-    id: "foyer",
-    room: "Entrance hall",
-    ceiling: "+3.40",
-    note: "A round marble inlay under a ring light marks the threshold. The first thing you see is straight ahead: a sculpture at the end of the gallery axis.",
-    media: img("stock/entrance-13.jpg", "A marble staircase lit from beneath each tread"),
-    plan: { x: 50, y: 84 },
-  },
-  {
-    id: "reception",
-    room: "Reception",
-    ceiling: "+3.40",
-    note: "Two sofas face each other across a travertine table, and the whole room is lit from a stepped gypsum ceiling and one chandelier.",
-    media: img("stock/living-09.jpg", "A formal reception with a crystal chandelier and ivory sofas"),
-    plan: { x: 20, y: 78 },
-  },
-  {
-    id: "living",
-    room: "Family living",
-    ceiling: "+3.20",
-    note: "The television wall is one long run of timber panels. By evening the cove takes over and the room is lit from its edges — try the lamp.",
-    media: img(
-      "client/boho-living-day.jpg",
-      "A family living room with a timber-panelled wall and a bouclé armchair",
-      undefined,
-      { night: "client/boho-living-night.jpg" },
-    ),
-    plan: { x: 80, y: 78 },
-  },
-  {
-    id: "dining",
-    room: "Dining & kitchen",
-    ceiling: "+3.20",
-    note: "No wall between cooking and eating — the ceiling steps down over the island instead, so the two zones read apart while the floor runs through.",
-    media: img("stock/kitchen-04.jpg", "A black kitchen with a marble splashback and a dining table under a globe chandelier"),
-    plan: { x: 80, y: 30 },
-  },
-  {
-    id: "study",
-    room: "Study",
-    ceiling: "+3.00",
-    note: "Joinery on three walls, a desk under the window, and a reading chair with its own lamp. The quietest room in the house.",
-    media: img("stock/library-20.jpg", "A study panelled in dark timber with a long desk"),
-    plan: { x: 50, y: 16 },
-  },
-  {
-    id: "master",
-    room: "Master bedroom",
-    ceiling: "+3.00",
-    note: "An upholstered headboard wall runs the full width of the room and hides the reading lights. Nothing hangs over the bed.",
-    media: img("stock/bedroom-09.jpg", "A bedroom with an arched, backlit headboard wall"),
-    plan: { x: 20, y: 38 },
-  },
-  {
-    id: "bath",
-    room: "Master bath",
-    ceiling: "+2.80",
-    note: "A backlit mirror and a pendant carry the room after dark; everything else is off. Switch the lamp to see it.",
-    media: img(
-      "client/guest-bath-mirror-day.jpg",
-      "A ribbed glass basin beneath a backlit arched mirror with petal pendants",
-      undefined,
-      { night: "client/guest-bath-mirror-night.jpg" },
-    ),
-    plan: { x: 20, y: 10 },
   },
 ];
 

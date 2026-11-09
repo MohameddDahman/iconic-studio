@@ -4,41 +4,82 @@ import { useCallback, useState } from "react";
 import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
+import { describeError } from "./ui";
 
 export interface UploadItem {
   id: string;
   name: string;
-  status: "measuring" | "uploading" | "saving" | "done" | "error";
+  status: "preparing" | "uploading" | "saving" | "done" | "error";
   error?: string;
   progress: number;
 }
 
-/** Read the real pixel size, and bake a 20px blur-up in the browser. */
-async function inspect(file: File) {
-  const bitmap = await createImageBitmap(file);
-  const { width, height } = bitmap;
+/** The longest edge worth keeping: enough for a full-width photograph on a large screen. */
+const MAX_EDGE = 2048;
+const QUALITY = 0.85;
+/** Anything already this small, and no wider than MAX_EDGE, is left exactly as it came. */
+const KEEP_BELOW = 300_000;
 
-  const w = 20;
-  const h = Math.max(1, Math.round((height / width) * w));
-  const canvas = document.createElement("canvas");
-  canvas.width = w;
-  canvas.height = h;
-  const ctx = canvas.getContext("2d");
+const encode = (canvas: HTMLCanvasElement, type: string) =>
+  new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, type, QUALITY));
 
+/** WebP where the browser can write it. Safari cannot, and quietly hands back a PNG. */
+async function compress(canvas: HTMLCanvasElement) {
+  const webp = await encode(canvas, "image/webp");
+  return webp?.type === "image/webp" ? webp : encode(canvas, "image/jpeg");
+}
+
+/**
+ * Get a photograph ready for the site, in the browser. Files straight from a
+ * camera or a renderer run to tens of megabytes, far more than any screen can
+ * show and enough to fill the studio’s storage, so what is uploaded is a copy
+ * no larger than the site needs, along with its size and a 20px blur-up.
+ */
+async function prepare(file: File) {
+  const bitmap = await createImageBitmap(file).catch(() => {
+    throw new Error("Could not be read — export it as JPEG, PNG or WebP");
+  });
+  const scale = Math.min(1, MAX_EDGE / Math.max(bitmap.width, bitmap.height));
+
+  let output: Blob = file;
+  let width = bitmap.width;
+  let height = bitmap.height;
+
+  if (scale < 1 || file.size >= KEEP_BELOW) {
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round(bitmap.width * scale);
+    canvas.height = Math.round(bitmap.height * scale);
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+      const smaller = await compress(canvas);
+      if (smaller && (scale < 1 || smaller.size < file.size)) {
+        output = smaller;
+        width = canvas.width;
+        height = canvas.height;
+      }
+    }
+  }
+
+  const blur = document.createElement("canvas");
+  blur.width = 20;
+  blur.height = Math.max(1, Math.round((bitmap.height / bitmap.width) * 20));
+  const blurCtx = blur.getContext("2d");
   let blurDataURL: string | undefined;
-  if (ctx) {
-    ctx.drawImage(bitmap, 0, 0, w, h);
-    blurDataURL = canvas.toDataURL("image/webp", 0.5);
+  if (blurCtx) {
+    blurCtx.drawImage(bitmap, 0, 0, blur.width, blur.height);
     // Safari without webp encoding returns a png data URL; either is fine.
+    blurDataURL = blur.toDataURL("image/webp", 0.5);
   }
   bitmap.close?.();
 
-  return { width, height, blurDataURL };
+  return { output, width, height, blurDataURL };
 }
 
 /**
  * Convex uploads are a two-step handshake: ask for a signed URL, POST the file
- * straight to it, then record what landed. Measuring in the browser means the
+ * straight to it, then record what landed. Preparing it in the browser means the
  * site can reserve the right space for the photograph before it loads, without
  * an image-processing step on the server.
  */
@@ -60,7 +101,7 @@ export function useMediaUpload() {
       const queued: UploadItem[] = list.map((f) => ({
         id: tag(f),
         name: f.name,
-        status: "measuring",
+        status: "preparing",
         progress: 0,
       }));
       // Say so, rather than dropping a PDF or a video without a word.
@@ -75,16 +116,16 @@ export function useMediaUpload() {
         const file = list[i];
         const item = queued[i];
         try {
-          const { width, height, blurDataURL } = await inspect(file);
+          const { output, width, height, blurDataURL } = await prepare(file);
           patch(item.id, { status: "uploading", progress: 0.2 });
 
           const url = await generateUploadUrl();
           const res = await fetch(url, {
             method: "POST",
-            headers: { "Content-Type": file.type },
-            body: file,
+            headers: { "Content-Type": output.type },
+            body: output,
           });
-          if (!res.ok) throw new Error(`Upload failed (${res.status})`);
+          if (!res.ok) throw new Error("Upload failed — try again");
           const { storageId } = (await res.json()) as { storageId: Id<"_storage"> };
 
           patch(item.id, { status: "saving", progress: 0.8 });
@@ -97,8 +138,8 @@ export function useMediaUpload() {
             width,
             height,
             blurDataURL,
-            bytes: file.size,
-            contentType: file.type,
+            bytes: output.size,
+            contentType: output.type,
           });
 
           ids.push(id);
@@ -106,7 +147,8 @@ export function useMediaUpload() {
         } catch (error) {
           patch(item.id, {
             status: "error",
-            error: error instanceof Error ? error.message : "Upload failed",
+            // A dropped connection reaches fetch as a bare TypeError.
+            error: error instanceof TypeError ? "Connection lost — try again" : describeError(error),
           });
         }
       }

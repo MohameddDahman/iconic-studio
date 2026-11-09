@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { scrollToTop } from "@/components/motion/ScrollSync";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
@@ -98,16 +99,19 @@ export default function MonographDesk() {
     setPicker(null);
     setEditing(spread ? spread._id : "new");
     editor.clearError();
+    // The form opens above the list, so a click low on the page would seem to do nothing.
+    scrollToTop();
   };
 
   const close = () => {
     if (dirty && !confirm("Discard the changes to this spread?")) return;
     setPicker(null);
     setEditing(null);
+    scrollToTop();
   };
 
-  const save = () =>
-    editor.run(async () => {
+  const save = async () => {
+    await editor.run(async () => {
       const payload = {
         folio: Number(draft.folio) || 8,
         kicker: draft.kicker.trim(),
@@ -124,6 +128,8 @@ export default function MonographDesk() {
       setPicker(null);
       setEditing(null);
     });
+    scrollToTop();
+  };
 
   const move = (index: number, delta: number) => {
     if (!spreads) return;
@@ -265,7 +271,7 @@ export default function MonographDesk() {
       {spreads === undefined && <p className="annotation text-on-surface-faint">Loading…</p>}
 
       {spreads && spreads.length === 0 && !editing && (
-        <Empty title="The volume is empty" hint="The site shows the seed spreads until the first one is added here." />
+        <Empty title="The volume is empty" hint="The site shows sample spreads until the first one is added here." />
       )}
 
       {spreads && spreads.length > 0 && (

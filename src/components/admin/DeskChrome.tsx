@@ -1,19 +1,18 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState, type MouseEvent, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import Wordmark from "@/components/chrome/Wordmark";
 import { cn } from "@/lib/utils";
+import { confirmLeaving } from "./ui";
 
-// The rooms screen (X-950) is left out: it edits the retired house page. The
-// screen and its records are untouched, so it can come back with that page.
 export const DESK = [
   { href: "/admin", label: "Overview", sheet: "X-900" },
   { href: "/admin/projects", label: "Projects", sheet: "X-910" },
   { href: "/admin/media", label: "Photographs", sheet: "X-920" },
   { href: "/admin/reviews", label: "Reviews", sheet: "X-930" },
   { href: "/admin/monograph", label: "Monograph", sheet: "X-940" },
-  { href: "/admin/enquiries", label: "Enquiries", sheet: "X-960" },
   { href: "/admin/settings", label: "Settings", sheet: "X-970" },
 ];
 
@@ -28,12 +27,10 @@ const isCurrent = (href: string, pathname: string) =>
  */
 export default function DeskChrome({
   email,
-  waiting,
   onSignOut,
   children,
 }: {
   email: string;
-  waiting: number;
   onSignOut: () => void;
   children: ReactNode;
 }) {
@@ -50,22 +47,19 @@ export default function DeskChrome({
     return () => wide.removeEventListener("change", close);
   }, []);
 
-  const badge = (count: number) =>
-    count > 0 ? (
-      <span className="annotation min-w-6 bg-accent px-1.5 py-0.5 text-center text-night tabular-nums">
-        {count}
-        <span className="sr-only"> waiting</span>
-      </span>
-    ) : null;
+  const leave = (event: MouseEvent, href: string) => {
+    if (href !== pathname && !confirmLeaving()) event.preventDefault();
+    else setOpen(false);
+  };
 
   return (
     <div className="flex min-h-dvh flex-col lg:flex-row">
       <header className="sticky top-0 z-40 flex items-center justify-between gap-4 border-b border-rule bg-surface px-6 py-4 lg:hidden">
         <div className="min-w-0">
-          <Link href="/" className="inked text-lead tracking-[0.28em] uppercase">
-            Iconic
+          <Link href="/" aria-label="Iconic — the public site" onClick={(e) => leave(e, "/")} className="-my-2 inline-block py-2">
+            <Wordmark className="h-7 w-[4.67rem]" />
           </Link>
-          <p className="annotation truncate text-on-surface-faint">{here?.label ?? "Studio desk"}</p>
+          <p className="annotation mt-1 truncate text-on-surface-faint">{here?.label ?? "Studio desk"}</p>
         </div>
         <button
           type="button"
@@ -75,7 +69,6 @@ export default function DeskChrome({
           className="condensed flex min-h-11 cursor-pointer items-center gap-2 border border-rule-strong px-4 text-label tracking-[0.14em] uppercase transition-colors hover:border-accent hover:text-accent"
         >
           {open ? "Close" : "Menu"}
-          {!open && badge(waiting)}
         </button>
       </header>
 
@@ -88,8 +81,8 @@ export default function DeskChrome({
       >
         <div className="flex h-full flex-col gap-6 px-6 py-6 lg:gap-8 lg:py-7">
           <div className="hidden lg:block">
-            <Link href="/" className="inked text-lead tracking-[0.28em] uppercase">
-              Iconic
+            <Link href="/" aria-label="Iconic — the public site" onClick={(e) => leave(e, "/")} className="-my-2 inline-block py-2">
+              <Wordmark className="h-8 w-[5.33rem]" />
             </Link>
             <p className="annotation mt-2 text-on-surface-faint">Studio desk</p>
           </div>
@@ -103,7 +96,7 @@ export default function DeskChrome({
                     <Link
                       href={item.href}
                       aria-current={active ? "page" : undefined}
-                      onClick={() => setOpen(false)}
+                      onClick={(e) => leave(e, item.href)}
                       className={cn(
                         "flex min-h-11 items-center gap-3 transition-colors duration-300",
                         active ? "text-accent" : "text-on-surface-muted hover:text-on-surface",
@@ -111,7 +104,6 @@ export default function DeskChrome({
                     >
                       <span className="annotation w-11 shrink-0 opacity-60">{item.sheet}</span>
                       <span className="condensed text-label tracking-wide uppercase">{item.label}</span>
-                      {item.href === "/admin/enquiries" && badge(waiting)}
                     </Link>
                   </li>
                 );
@@ -133,7 +125,9 @@ export default function DeskChrome({
             </Link>
             <button
               type="button"
-              onClick={onSignOut}
+              onClick={() => {
+                if (confirmLeaving()) onSignOut();
+              }}
               className="annotation flex min-h-11 cursor-pointer items-center text-on-surface-faint transition-colors hover:text-accent"
             >
               Sign out

@@ -20,7 +20,12 @@ export async function generateMetadata({ params }: PageProps<"/projects/[slug]">
   return {
     title: project.title,
     description: project.brief,
-    openGraph: { title: project.title, description: project.brief, images: [{ url: project.cover.src }] },
+    openGraph: {
+      title: project.title,
+      description: project.brief,
+      // A share preview needs a photograph a messenger is willing to fetch.
+      images: [{ url: `/_next/image?url=${encodeURIComponent(project.cover.src)}&w=1200&q=80` }],
+    },
   };
 }
 

@@ -44,4 +44,3 @@ export function remoteMedia(
 }
 
 export const aspect = (m: Media) => m.width / m.height;
-export const isPortrait = (m: Media) => m.height > m.width;

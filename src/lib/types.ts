@@ -95,18 +95,6 @@ export interface Testimonial {
   placeholder?: boolean;
 }
 
-/** One room in the house walkthrough. `id` matches a room in the house plan. */
-export interface Threshold {
-  id: string;
-  room: string;
-  /** Finished ceiling height. */
-  ceiling: string;
-  note: string;
-  media: Media;
-  /** Legacy plan position (0–100 × 0–64), kept for the studio desk. */
-  plan: { x: number; y: number };
-}
-
 /** A spread in the bound volume. */
 export interface Spread {
   id: string;

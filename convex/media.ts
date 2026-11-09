@@ -149,9 +149,6 @@ export const remove = mutation({
         });
       }
     }
-    for (const room of await ctx.db.query("thresholds").collect()) {
-      if (room.mediaId === id) await ctx.db.patch(room._id, { mediaId: undefined });
-    }
     for (const other of await ctx.db.query("media").collect()) {
       if (other.nightId === id) await ctx.db.patch(other._id, { nightId: undefined });
     }
@@ -166,7 +163,7 @@ export const list = query({
   args: {},
   handler: async (ctx) => {
     await requireStudio(ctx);
-    const docs = await ctx.db.query("media").withIndex("by_created").order("desc").take(500);
+    const docs = await ctx.db.query("media").withIndex("by_created").order("desc").take(2000);
     const rows = [];
     for (const doc of docs) {
       const media = await resolveMedia(ctx, doc);
@@ -195,7 +192,6 @@ export const usage = query({
       add(spread.mediaId, `Monograph — ${spread.title}`);
       add(spread.mediaBId, `Monograph — ${spread.title} (inset)`);
     }
-    for (const room of await ctx.db.query("thresholds").collect()) add(room.mediaId, `Rooms — ${room.room}`);
     for (const photo of await ctx.db.query("media").collect()) {
       add(photo.nightId, `Evening version of “${photo.alt}”`);
     }

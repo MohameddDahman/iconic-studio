@@ -19,7 +19,8 @@ import {
   useLeaveWarning,
   useRun,
 } from "./ui";
-import { cn, drawingNumber, slugify } from "@/lib/utils";
+import { scrollToTop } from "@/components/motion/ScrollSync";
+import { drawingNumber, slugify } from "@/lib/utils";
 
 const TYPOLOGIES = [
   "Apartment",
@@ -90,10 +91,18 @@ interface Draft {
 
 const BLANK_FACTS = ["Area", "Ceiling", "Scope", "Handover"].map((label) => ({ label, value: "" }));
 
-const blank = (): Draft => ({
+/** The next free job number this year, so two projects never share one. */
+const nextReference = (taken: string[]) => {
+  const year = new Date().getFullYear();
+  const prefix = drawingNumber(year, 0, "ID").slice(0, -3);
+  const used = taken.filter((r) => r.startsWith(prefix)).map((r) => Number(r.slice(prefix.length)) || 0);
+  return drawingNumber(year, Math.max(0, ...used) + 1, "ID");
+};
+
+const blank = (reference = ""): Draft => ({
   title: "",
   slug: "",
-  reference: drawingNumber(new Date().getFullYear(), 1, "ID"),
+  reference,
   year: String(new Date().getFullYear()),
   location: "",
   typology: "Apartment",
@@ -165,7 +174,12 @@ export default function ProjectsDesk() {
   const [seededFor, setSeededFor] = useState<string | null>(null);
   if (seedKey !== seededFor) {
     setSeededFor(seedKey);
-    const next = seedKey === "new" ? blank() : editing ? draftFrom(editing) : null;
+    const next =
+      seedKey === "new"
+        ? blank(nextReference((projects ?? []).map((p) => p.reference)))
+        : editing
+          ? draftFrom(editing)
+          : null;
     if (next) {
       setDraft(next);
       setInitial(JSON.stringify(next));
@@ -182,16 +196,18 @@ export default function ProjectsDesk() {
     editor.clearError();
     setPicker(null);
     setEditingId(id);
+    scrollToTop();
   };
 
   const close = () => {
     if (dirty && !confirm("Discard the changes to this project?")) return;
     setPicker(null);
     setEditingId(null);
+    scrollToTop();
   };
 
-  const save = () =>
-    editor.run(async () => {
+  const save = async () => {
+    await editor.run(async () => {
       const payload = {
         title: draft.title,
         slug: draft.slug || slugify(draft.title),
@@ -215,6 +231,9 @@ export default function ProjectsDesk() {
       setPicker(null);
       setEditingId(null);
     });
+    // Saved or refused, the outcome is shown at the top of the page.
+    scrollToTop();
+  };
 
   const destroy = () => {
     if (!editingId || editingId === "new") return;
@@ -224,6 +243,7 @@ export default function ProjectsDesk() {
       await remove({ id });
       setPicker(null);
       setEditingId(null);
+      scrollToTop();
     });
   };
 
@@ -254,13 +274,28 @@ export default function ProjectsDesk() {
   if (editingId) {
     const cover = draft.coverId ? photos.get(draft.coverId) : undefined;
     const noPhotos = !draft.coverId && draft.galleryIds.length === 0;
+    const buttons = (
+      <>
+        <Btn type="button" onClick={close}>
+          {dirty ? "Discard" : "Close"}
+        </Btn>
+        <Btn
+          type="button"
+          variant="primary"
+          disabled={editor.busy || !draft.title.trim()}
+          onClick={() => void save()}
+        >
+          {editor.busy ? "Saving" : "Save"}
+        </Btn>
+      </>
+    );
 
     return (
       <>
         <DeskHeader
           sheet={editingId === "new" ? "X-910 / NEW" : draft.reference || "X-910"}
           title={editingId === "new" ? "New project" : draft.title || "Untitled"}
-          lead="Everything here appears on the public case study. Leave it as a draft until it reads the way you want."
+          lead="Everything here appears on the public case study. Saving puts it on the site — switch it to Draft to keep it off while you work."
           action={
             <div className="flex flex-wrap items-center gap-2">
               {editing?.published && (
@@ -273,27 +308,15 @@ export default function ProjectsDesk() {
                   View on the site
                 </a>
               )}
-              <Btn type="button" onClick={close}>
-                {dirty ? "Discard" : "Close"}
-              </Btn>
-              <Btn
-                type="button"
-                variant="primary"
-                disabled={editor.busy || !draft.title.trim()}
-                onClick={() => void save()}
-              >
-                {editor.busy ? "Saving" : "Save"}
-              </Btn>
+              {buttons}
             </div>
           }
         />
 
         <div className="mb-6 flex flex-col gap-3 empty:hidden">
           {editor.error && <Notice tone="error">{editor.error}</Notice>}
-          {draft.published && noPhotos && (
-            <Notice tone="warning">
-              Published, but there is no photograph yet — the project stays off the site until it has one.
-            </Notice>
+          {draft.published && noPhotos && Boolean(draft.title.trim()) && (
+            <Notice tone="warning">No photograph yet — the project stays off the site until it has one.</Notice>
           )}
         </div>
 
@@ -429,22 +452,19 @@ export default function ProjectsDesk() {
               <Toggle
                 checked={draft.published}
                 onChange={(v) => set("published", v)}
-                label={draft.published ? "Published" : "Draft"}
+                label={draft.published ? "Live on the site" : "Draft — not on the site"}
               />
               <Toggle
                 checked={draft.featured}
                 onChange={(v) => set("featured", v)}
                 label="Show on the home page"
               />
-              <Toggle
-                checked={draft.placeholder}
-                onChange={(v) => set("placeholder", v)}
-                label="Stock placeholder"
-              />
-              {draft.placeholder && (
-                <p className="text-xs text-on-surface-faint">
-                  Built from stock photography, not the studio&rsquo;s own work. Replace or remove it before launch.
-                </p>
+              {editing?.placeholder && (
+                <Toggle
+                  checked={draft.placeholder}
+                  onChange={(v) => set("placeholder", v)}
+                  label="Stock placeholder"
+                />
               )}
             </Panel>
 
@@ -462,7 +482,7 @@ export default function ProjectsDesk() {
                 )}
               </div>
               {draft.coverId ? (
-                <Thumb src={cover?.src} alt={cover?.alt} badge={cover?.night ? "Evening" : undefined} />
+                <Thumb src={cover?.src} alt={cover?.alt} badge={cover?.night ? "Evening" : undefined} sizes="360px" />
               ) : (
                 <p className="text-sm text-on-surface-muted">
                   None chosen — the first photograph in the gallery is used.
@@ -483,7 +503,7 @@ export default function ProjectsDesk() {
                     const photo = photos.get(id);
                     return (
                       <li key={id} className="flex flex-col gap-1">
-                        <Thumb src={photo?.src} alt={photo?.alt} badge={String(i + 1).padStart(2, "0")} />
+                        <Thumb src={photo?.src} alt={photo?.alt} badge={String(i + 1).padStart(2, "0")} sizes="130px" />
                         <div className="flex items-center justify-between">
                           <button
                             type="button"
@@ -559,6 +579,8 @@ export default function ProjectsDesk() {
             />
           </section>
         )}
+
+        <div className="mt-10 flex flex-wrap justify-end gap-2 border-t border-rule pt-6">{buttons}</div>
       </>
     );
   }
@@ -571,7 +593,7 @@ export default function ProjectsDesk() {
         title="Projects"
         lead="The register, in the order it appears on the site."
         action={
-          <Btn type="button" variant="primary" onClick={() => open("new")}>
+          <Btn type="button" variant="primary" disabled={projects === undefined} onClick={() => open("new")}>
             New project
           </Btn>
         }
@@ -587,7 +609,7 @@ export default function ProjectsDesk() {
       {projects && projects.length === 0 && (
         <Empty
           title="No projects yet"
-          hint="The site shows the seed set until the first project with a photograph is published here."
+          hint="The site shows sample projects until the first one with a photograph is saved here."
         />
       )}
 
@@ -600,7 +622,7 @@ export default function ProjectsDesk() {
                 key={project._id}
                 className="grid items-center gap-4 border-b border-rule py-4 sm:grid-cols-[5rem_1fr_auto]"
               >
-                <Thumb src={thumb?.src} className="w-20" />
+                <Thumb src={thumb?.src} className="w-20" sizes="80px" />
 
                 <div className="min-w-0">
                   <p className="annotation mb-1.5 flex flex-wrap items-center gap-3 text-on-surface-faint">
@@ -615,31 +637,35 @@ export default function ProjectsDesk() {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2">
-                  {project.published && !thumb && <Chip tone="warning">No photograph — not shown</Chip>}
+                  {project.published && !thumb ? (
+                    <Chip tone="warning">No photograph — not shown</Chip>
+                  ) : (
+                    <Chip tone={project.published ? "accent" : "muted"}>{project.published ? "Live" : "Draft"}</Chip>
+                  )}
                   <Btn
                     type="button"
-                    title={project.published ? "Live — click to take it off the site" : "Draft — click to publish"}
                     onClick={() =>
                       void register.run(() => setPublished({ id: project._id, published: !project.published }))
                     }
-                    className={cn(project.published && "border-accent text-accent")}
                   >
-                    {project.published ? "Live" : "Draft"}
+                    {project.published ? "Take off site" : "Put on site"}
                   </Btn>
-                  <Btn type="button" aria-label={`Move ${project.title} up`} disabled={i === 0} onClick={() => move(i, -1)}>
-                    ↑
-                  </Btn>
-                  <Btn
-                    type="button"
-                    aria-label={`Move ${project.title} down`}
-                    disabled={i === projects.length - 1}
-                    onClick={() => move(i, 1)}
-                  >
-                    ↓
-                  </Btn>
-                  <Btn type="button" variant="primary" onClick={() => open(project._id)}>
-                    Edit
-                  </Btn>
+                  <div className="flex items-center gap-2">
+                    <Btn type="button" aria-label={`Move ${project.title} up`} disabled={i === 0} onClick={() => move(i, -1)}>
+                      ↑
+                    </Btn>
+                    <Btn
+                      type="button"
+                      aria-label={`Move ${project.title} down`}
+                      disabled={i === projects.length - 1}
+                      onClick={() => move(i, 1)}
+                    >
+                      ↓
+                    </Btn>
+                    <Btn type="button" variant="primary" onClick={() => open(project._id)}>
+                      Edit
+                    </Btn>
+                  </div>
                 </div>
               </li>
             );

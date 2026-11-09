@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { scrollToTop } from "@/components/motion/ScrollSync";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
@@ -87,15 +88,18 @@ export default function ReviewsDesk() {
     setInitial(JSON.stringify(next));
     setEditing(review ? review._id : "new");
     editor.clearError();
+    // The form opens above the list, so a click low on the page would seem to do nothing.
+    scrollToTop();
   };
 
   const close = () => {
     if (dirty && !confirm("Discard the changes to this review?")) return;
     setEditing(null);
+    scrollToTop();
   };
 
-  const save = () =>
-    editor.run(async () => {
+  const save = async () => {
+    await editor.run(async () => {
       const payload = {
         quote: draft.quote.trim(),
         author: draft.author.trim(),
@@ -114,6 +118,8 @@ export default function ReviewsDesk() {
       else if (editing) await update({ id: editing, ...payload });
       setEditing(null);
     });
+    scrollToTop();
+  };
 
   const move = (index: number, delta: number) => {
     if (!reviews) return;

@@ -89,14 +89,9 @@ function SignIn() {
           </button>
         </form>
 
-        <div className="mt-10 space-y-3 border-t border-rule pt-6 text-sm text-on-surface-faint">
-          <p>
-            There is no sign-up. Accounts are made by the developer, for the addresses listed in{" "}
-            <code className="text-accent">ADMIN_EMAILS</code> on the Convex deployment — and taking an address
-            off that list locks it out straight away.
-          </p>
-          <p>Need an account, or forgotten the password? Ask the developer.</p>
-        </div>
+        <p className="mt-10 border-t border-rule pt-6 text-sm text-on-surface-faint">
+          Forgotten your password? Ask your developer to reset it.
+        </p>
       </div>
     </div>
   );
@@ -191,9 +186,7 @@ function FirstRun({ email }: { email: string }) {
         </form>
 
         <p className="mt-10 border-t border-rule pt-6 text-sm text-on-surface-faint">
-          Only the addresses in <code className="text-accent">ADMIN_EMAILS</code> on the Convex
-          deployment can be used here. Do this now: until it is done, whoever opens this page first
-          sets the password.
+          Do this now: until it is done, whoever opens this page first sets the password.
         </p>
       </div>
     </div>
@@ -242,8 +235,8 @@ function NoAccess({ email }: { email: string }) {
         <p className="annotation mb-6 text-accent">X-900 — No access</p>
         <h1 className="inked text-d3 leading-[0.96] font-light">This account cannot use the desk.</h1>
         <p className="mt-4 text-on-surface-muted">
-          {email || "This address"} is no longer on the list of studio addresses. If that is a mistake, ask the
-          developer to add it to <code className="text-accent">ADMIN_EMAILS</code> again.
+          {email || "This address"} is no longer on the list of studio addresses. If that is a mistake, ask your
+          developer to add it back.
         </p>
         <button type="button" onClick={() => void signOut()} className={cn("mt-8", bigButtonClass)}>
           <span className="condensed text-label tracking-[0.18em] uppercase">Sign out</span>
@@ -255,10 +248,9 @@ function NoAccess({ email }: { email: string }) {
 
 function DeskLayout({ email, children }: { email: string; children: ReactNode }) {
   const { signOut } = useAuthActions();
-  const waiting = useQuery(api.inquiries.waiting);
 
   return (
-    <DeskChrome email={email} waiting={waiting ?? 0} onSignOut={() => void signOut()}>
+    <DeskChrome email={email} onSignOut={() => void signOut()}>
       {children}
     </DeskChrome>
   );

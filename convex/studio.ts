@@ -21,22 +21,20 @@ export const viewer = query({
  * Whether the desk still has no account at all. While that is true — and only
  * then — /admin offers to set the first password, because there is otherwise no
  * way in. The moment an account exists this turns false for good and the page
- * is sign-in only. The address is returned so the first run can fill it in:
- * it is already the one thing ADMIN_EMAILS makes public to anyone who tries.
+ * is sign-in only. The address is returned only while that is true, so the first
+ * run can fill it in; afterwards this tells a stranger nothing.
  */
 export const firstRun = query({
   args: {},
   handler: async (ctx) => {
     const allowed = studioEmails();
     const existing = await ctx.db.query("users").take(1);
-    return {
-      needed: existing.length === 0 && allowed.length > 0,
-      email: allowed.length === 1 ? allowed[0] : "",
-    };
+    const needed = existing.length === 0 && allowed.length > 0;
+    return { needed, email: needed && allowed.length === 1 ? allowed[0] : "" };
   },
 });
 
-const needsDescription = (alt: string) => !alt.trim() || /\.(jpe?g|png|webp|avif)$/i.test(alt);
+const needsDescription = (alt: string) => !/\p{L}/u.test(alt) || /\.(jpe?g|png|webp|avif)$/i.test(alt);
 
 /**
  * Everything the overview shows, in one query. "On the site" counts what the
@@ -46,13 +44,11 @@ export const overview = query({
   args: {},
   handler: async (ctx) => {
     await requireStudio(ctx);
-    const [projects, media, reviews, spreads, rooms, enquiries, settings] = await Promise.all([
+    const [projects, media, reviews, spreads, settings] = await Promise.all([
       ctx.db.query("projects").collect(),
       ctx.db.query("media").collect(),
       ctx.db.query("testimonials").collect(),
       ctx.db.query("spreads").collect(),
-      ctx.db.query("thresholds").collect(),
-      ctx.db.query("inquiries").withIndex("by_created").order("desc").take(200),
       ctx.db.query("settings").first(),
     ]);
 
@@ -76,23 +72,6 @@ export const overview = query({
         total: spreads.length,
         onSite: spreads.filter((s) => s.published && s.mediaId).length,
         withoutPlate: spreads.filter((s) => s.published && !s.mediaId).length,
-      },
-      rooms: {
-        total: rooms.length,
-        onSite: rooms.filter((r) => r.published && r.mediaId).length,
-        withoutPhoto: rooms.filter((r) => r.published && !r.mediaId).length,
-      },
-      enquiries: {
-        total: enquiries.length,
-        waiting: enquiries.filter((e) => !e.handled).length,
-        latest: enquiries.slice(0, 5).map((e) => ({
-          _id: e._id,
-          name: e.name,
-          subject: e.subject,
-          space: e.space,
-          handled: e.handled,
-          createdAt: e.createdAt,
-        })),
       },
       settingsSaved: settings !== null,
     };

@@ -97,7 +97,7 @@ export default function FeaturedWork({ projects, total }: { projects: Project[];
         </div>
         <div className="flex flex-col items-start gap-6 lg:col-span-5 lg:col-start-8 lg:items-end">
           <p className="max-w-sm text-on-surface-muted lg:text-right">
-            {total} projects across homes, workplaces, restaurants, hotels, retail and healthcare.
+            {total} projects from the studio.
           </p>
           <div className="flex items-center gap-3">
             <CtaLink href="/projects" variant="outline">

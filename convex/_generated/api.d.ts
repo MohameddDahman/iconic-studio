@@ -11,7 +11,6 @@
 import type * as access from "../access.js";
 import type * as auth from "../auth.js";
 import type * as http from "../http.js";
-import type * as inquiries from "../inquiries.js";
 import type * as lib from "../lib.js";
 import type * as media from "../media.js";
 import type * as projects from "../projects.js";
@@ -20,7 +19,6 @@ import type * as settings from "../settings.js";
 import type * as spreads from "../spreads.js";
 import type * as studio from "../studio.js";
 import type * as testimonials from "../testimonials.js";
-import type * as thresholds from "../thresholds.js";
 
 import type {
   ApiFromModules,
@@ -32,7 +30,6 @@ declare const fullApi: ApiFromModules<{
   access: typeof access;
   auth: typeof auth;
   http: typeof http;
-  inquiries: typeof inquiries;
   lib: typeof lib;
   media: typeof media;
   projects: typeof projects;
@@ -41,7 +38,6 @@ declare const fullApi: ApiFromModules<{
   spreads: typeof spreads;
   studio: typeof studio;
   testimonials: typeof testimonials;
-  thresholds: typeof thresholds;
 }>;
 
 /**

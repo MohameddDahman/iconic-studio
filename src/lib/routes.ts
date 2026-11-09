@@ -29,6 +29,9 @@ export const SHEETS: Sheet[] = [
   { key: "contact", href: "/contact", label: "Contact", sheet: "06", title: "Start a project" },
 ];
 
+/** Where the site lives, until the studio has its own domain. */
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://iconic-architecture.vercel.app";
+
 /** The nav omits home — the wordmark already goes there. */
 export const NAV_SHEETS = SHEETS.filter((s) => s.key !== "home");
 

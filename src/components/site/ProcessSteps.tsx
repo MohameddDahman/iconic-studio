@@ -98,7 +98,7 @@ export default function ProcessSteps({ stages, index = "(06)" }: { stages: reado
               data-step
               className={cn(
                 "py-10 pl-8 transition-opacity duration-700 md:pl-12 lg:py-14",
-                i === active ? "lg:opacity-100" : "lg:opacity-35",
+                i === active ? "lg:opacity-100" : "lg:opacity-60",
               )}
             >
               <span className="annotation text-accent">{stage.n}</span>

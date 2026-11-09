@@ -114,7 +114,7 @@ export default function Disciplines({ items }: { items: Discipline[] }) {
                       alt={d.media.alt}
                       fill
                       sizes="(min-width: 1024px) 40vw, 1px"
-                      quality={82}
+                      quality={80}
                       placeholder={d.media.blurDataURL ? "blur" : "empty"}
                       blurDataURL={d.media.blurDataURL}
                       className={cn(

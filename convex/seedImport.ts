@@ -7,7 +7,6 @@ import {
   SEED_SETTINGS,
   SEED_SPREADS,
   SEED_TESTIMONIALS,
-  SEED_THRESHOLDS,
 } from "../src/lib/seed";
 import { now } from "./lib";
 
@@ -61,7 +60,6 @@ function seedFiles() {
     add(project.cover);
     project.gallery.forEach(add);
   }
-  for (const room of SEED_THRESHOLDS) add(room.media);
   for (const spread of SEED_SPREADS) {
     add(spread.media);
     if (spread.mediaB) add(spread.mediaB);
@@ -86,7 +84,7 @@ export const uploadUrls = internalMutation({
   },
 });
 
-const TABLES = ["projects", "testimonials", "spreads", "thresholds", "media", "settings"] as const;
+const TABLES = ["projects", "testimonials", "spreads", "media", "settings"] as const;
 
 export const apply = internalMutation({
   args: {
@@ -172,19 +170,6 @@ export const apply = internalMutation({
       });
     }
 
-    for (const [index, room] of SEED_THRESHOLDS.entries()) {
-      await ctx.db.insert("thresholds", {
-        room: room.room,
-        ceiling: room.ceiling,
-        note: room.note,
-        mediaId: mediaBySrc.get(room.media.src),
-        planX: room.plan.x,
-        planY: room.plan.y,
-        published: true,
-        order: index + 1,
-      });
-    }
-
     for (const [index, spread] of SEED_SPREADS.entries()) {
       await ctx.db.insert("spreads", {
         folio: spread.folio,
@@ -219,7 +204,6 @@ export const apply = internalMutation({
     return {
       media: mediaBySrc.size,
       projects: SEED_PROJECTS.length,
-      rooms: SEED_THRESHOLDS.length,
       spreads: SEED_SPREADS.length,
       reviews: SEED_TESTIMONIALS.length,
       missing: files.filter((file) => !uploaded.has(file.src)).map((file) => file.src),

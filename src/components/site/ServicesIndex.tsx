@@ -85,7 +85,7 @@ export default function ServicesIndex({ items }: { items: Discipline[] }) {
                     alt={d.media.alt}
                     fill
                     sizes="(min-width: 1024px) 40vw, (min-width: 768px) 55vw, 100vw"
-                    quality={82}
+                    quality={80}
                     placeholder={d.media.blurDataURL ? "blur" : "empty"}
                     blurDataURL={d.media.blurDataURL}
                     className="object-cover"

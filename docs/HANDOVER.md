@@ -43,7 +43,6 @@ The four real projects — Modern Boho Residence, Warm Minimal Guest Bath, Stone
 | What | Where | Status |
 |---|---|---|
 | Real project titles and statements | `src/lib/seed.ts` | Written from the renders — confirm |
-| Walkthrough room notes | `SEED_THRESHOLDS` | Illustrative, and no longer shown anywhere — they described the rooms of the retired house page. The records and their editing screen are intact, just out of the desk navigation |
 | Home page figures | `src/app/(site)/page.tsx` | Counted from the content (projects, disciplines, sectors, reviews), so they stay true as content changes |
 | Services and FAQ copy | `src/lib/practice.ts`, `src/app/(site)/services/page.tsx` | General, no prices or promises — confirm the wording |
 | Phone, WhatsApp, address, map and links | `/admin` → Settings | Real — from the studio's Linktree and its Google Maps listing. There is no public email yet: add one in Settings and it appears on the contact page and in the footer |
@@ -70,10 +69,10 @@ At handover every page passed: each wheel notch moves the page exactly one notch
 `/admin`, backed by Convex. Nothing on it is public.
 
 - **Accounts.** The desk only signs people in; there is no sign-up on the site. Each account is made with `node scripts/create-desk-account.mjs`, which asks for the password at the prompt so it is never typed into a public page, passed as an argument or kept in this repository. Only addresses in `ADMIN_EMAILS` can have one, the list is checked on every request, and removing an address locks that person out at once, even mid-session.
-- **Overview** shows what each public section is running on — the studio's own records ("Live") or still the seed content — what needs attention (photographs without a description; published projects, spreads or rooms missing the photograph they need), and the latest enquiries.
+- **Overview** shows what each public section is running on — the studio's own records ("Live") or still sample content — what needs attention (photographs without a description; published projects, spreads or rooms missing the photograph they need), and the latest enquiries.
 - **Photographs** is the library everything draws from: search, filters, where each photograph is used, and its **evening version** — the same view rendered after dark, which gives the photograph its lamp switch wherever it appears. Deleting a photograph takes it out of every project, spread and room first.
-- **Projects, Reviews, Monograph and Rooms** edit what their pages show, in order. A published project needs at least one photograph, a spread its plate and a room its photograph; until then each stays off the site, and the desk says so.
-- **Enquiries** keeps what was sent through the contact form while the site had one; the site no longer has a form. **Settings** holds the studio's name, phone, WhatsApp number, address, Google Maps link, Instagram and its other links (Facebook, Behance, LinkedIn, Google reviews). The contact page's map pins the place the Google Maps link points to.
+- **Projects, Reviews and Monograph** edit what their pages show, in order. A project needs at least one photograph and a spread its plate; until then each stays off the site. A saved project goes live straight away; switch it to Draft to keep it off.
+- **Settings** holds the studio's name, phone, WhatsApp number, address, Google Maps link, Instagram and other links. The Enquiries and Rooms screens are gone: the contact form and the house page were retired and nothing used them.
 
 Every save reports whether it worked, and the editors ask before discarding unsaved changes.
 
@@ -104,7 +103,7 @@ After that they sign in at <https://iconic-architecture.vercel.app/admin> with t
 
 - [x] The studio's own projects are on the site, so the seven stock-photo placeholders never show — they only stand in while nothing is published
 - [ ] The monograph still runs on the imported sample spreads, so the book shows that stock work. Curate the spreads at `/admin` → Monograph, then print the PDF again (`node scripts/build-monograph-pdf.mjs`)
-- [ ] Get original exports of the studio's renders and upload them at `/admin`
+- [ ] Keep the full-size exports of the studio's renders somewhere safe. The desk uploads a web copy of each (2048px WebP), not the original
 - [ ] Confirm project titles, descriptions and the services copy
 - [x] Real phone, WhatsApp, address, map and links in `/admin` → Settings — add an email there if the studio wants one on the site
 - [ ] Add the studio's domain in Vercel, set `NEXT_PUBLIC_SITE_URL` there and `SITE_URL` on production Convex to match, and add an OG image
@@ -113,7 +112,7 @@ After that they sign in at <https://iconic-architecture.vercel.app/admin> with t
 
 ## 7. Getting the content in
 
-The site's seed content — projects, rooms, monograph spreads, reviews and settings — has been imported into Convex, so it is all editable at `/admin`. The photographs were uploaded from `public/media`; the records were rebuilt from `src/lib/seed.ts`.
+The site's seed content — projects, monograph spreads, reviews and settings — has been imported into Convex, so it is all editable at `/admin`. The photographs were uploaded from `public/media`; the records were rebuilt from `src/lib/seed.ts`.
 
 ```bash
 node scripts/import-seed.mjs            # into the dev deployment
@@ -126,7 +125,7 @@ Without `--replace` the import stops rather than writing over rows that already 
 ## 8. Known limitations
 
 - **Where it is deployed.** The site is on Vercel (project `iconic-studio`, <https://iconic-architecture.vercel.app>), built from <https://github.com/MohameddDahman/iconic-studio>. `npx vercel deploy --prod` publishes again from this folder.
-- **The signed-in desk has not had a first run yet.** The functions are deployed to the dev deployment and the public side answers, but saving, uploading and deleting need a signed-in account, which only a person can set up. After setting the password, add a test project with a photograph, give a photograph an evening version, and delete both.
+- **Convex free plan: 1 GB of file storage.** Photographs are resized in the browser on upload, to 2048px on the long edge at quality 85, so a photograph is usually 150-800 KB. The desk's Photographs screen lists what each one costs. The desk is tested end to end on a throwaway local Convex backend, never with the live account.
 - **Password resets go through the developer.** There is no email provider, so for a forgotten password delete that person's row in `authAccounts` in the Convex dashboard, then run `node scripts/create-desk-account.mjs` for them again.
 - **The seed content's evening pairs stay in code.** Photographs uploaded at `/admin` get their evening version there; the seed set's pairs are still declared in `src/lib/seed.ts`.
 - **The monograph PDF is a snapshot.** Request a copy on `/monograph` hands out `public/monograph/iconic-volume-i.pdf`, printed from the book's own pages (at `/monograph/print`, which nothing links to) so it matches the site page for page. It does not follow edits by itself: after changing the monograph or its projects at `/admin`, run `node scripts/build-monograph-pdf.mjs` and deploy. For now it includes the seven stock-photo placeholder projects, like the book on the site.

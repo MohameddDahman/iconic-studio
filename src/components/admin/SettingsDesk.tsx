@@ -57,13 +57,27 @@ export default function SettingsDesk() {
       draft.links.map((link, k) => (k === i ? { ...link, ...patch } : link)),
     );
 
+  const header = (
+    <DeskHeader
+      sheet="X-970"
+      title="Settings"
+      lead="The studio’s own details, used in the footer, on the contact page and in the page titles."
+    />
+  );
+
+  // Until the saved details arrive, the form would show the placeholders instead.
+  if (settings === undefined) {
+    return (
+      <>
+        {header}
+        <p className="annotation text-on-surface-faint">Loading…</p>
+      </>
+    );
+  }
+
   return (
     <>
-      <DeskHeader
-        sheet="X-970"
-        title="Settings"
-        lead="The studio’s own details, used in the footer, on the contact page and in the page titles."
-      />
+      {header}
 
       {settings === null && (
         <Notice tone="warning" className="mb-6 max-w-3xl">

@@ -5,7 +5,7 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
 import { useMediaUpload } from "./useMediaUpload";
-import { Btn, Empty, Field, Notice, Thumb, inputClass, useLeaveWarning, useRun } from "./ui";
+import { Btn, DeskPhoto, Empty, Field, Notice, Thumb, inputClass, useLeaveWarning, useRun } from "./ui";
 import { cn } from "@/lib/utils";
 
 export interface MediaRow {
@@ -22,8 +22,8 @@ export interface MediaRow {
   createdAt: number;
 }
 
-/** No description, or one that is still the filename. */
-export const needsDescription = (alt: string) => !alt.trim() || /\.(jpe?g|png|webp|avif)$/i.test(alt);
+/** No description, one that is only a number, or one that is still the filename. */
+export const needsDescription = (alt: string) => !/\p{L}/u.test(alt) || /\.(jpe?g|png|webp|avif)$/i.test(alt);
 
 const fileSize = (bytes?: number) =>
   bytes === undefined
@@ -65,7 +65,7 @@ export function DropZone({
       )}
     >
       <p className="text-sm text-on-surface-muted">{hint}</p>
-      <p className="annotation mt-2 text-on-surface-faint">JPEG, PNG, WebP or AVIF · measured automatically</p>
+      <p className="annotation mt-2 text-on-surface-faint">JPEG, PNG, WebP or AVIF · resized for the web automatically</p>
       <input
         ref={inputRef}
         type="file"
@@ -116,6 +116,9 @@ export function UploadQueue({ items }: { items: ReturnType<typeof useMediaUpload
 
 type Filter = "all" | "describe" | "evening" | "unused";
 
+/** Tiles are added a page at a time, so a large library opens quickly. */
+const PAGE = 48;
+
 const FILTERS: { id: Filter; label: string }[] = [
   { id: "all", label: "All" },
   { id: "describe", label: "Needs a description" },
@@ -151,6 +154,7 @@ export default function MediaLibrary({
   const [editing, setEditing] = useState<Id<"media"> | null>(null);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
+  const [shown, setShown] = useState(PAGE);
 
   const uses = useMemo(() => new Map((usage ?? []).map((entry) => [entry.id, entry.uses])), [usage]);
   const evenings = useMemo(
@@ -186,7 +190,7 @@ export default function MediaLibrary({
       {media && media.length === 0 && (
         <Empty
           title="Nothing uploaded yet"
-          hint="Drop in the original photographs. The site runs on the seed set until you do."
+          hint="Drop in the studio’s photographs. The site shows sample photographs until you do."
         />
       )}
 
@@ -196,7 +200,10 @@ export default function MediaLibrary({
             <input
               type="search"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setShown(PAGE);
+              }}
               placeholder="Search the descriptions"
               aria-label="Search photographs by description"
               className={cn(inputClass, "max-w-xs")}
@@ -208,7 +215,10 @@ export default function MediaLibrary({
                     key={option.id}
                     type="button"
                     aria-pressed={filter === option.id}
-                    onClick={() => setFilter(option.id)}
+                    onClick={() => {
+                      setFilter(option.id);
+                      setShown(PAGE);
+                    }}
                     className={cn(
                       "annotation min-h-11 cursor-pointer border px-3 transition-colors",
                       filter === option.id
@@ -232,7 +242,7 @@ export default function MediaLibrary({
             </p>
           ) : (
             <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">
-              {visible.map((photo) => {
+              {visible.slice(0, shown).map((photo) => {
                 const isSelected = selected.includes(photo._id);
                 const position = selected.indexOf(photo._id);
                 const used = uses.get(photo._id)?.length ?? 0;
@@ -245,8 +255,11 @@ export default function MediaLibrary({
                         isSelected || editing === photo._id ? "border-accent" : "border-rule",
                       )}
                     >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={photo.src} alt={photo.alt} loading="lazy" className="h-full w-full object-cover" />
+                      <DeskPhoto
+                        src={photo.src}
+                        alt={photo.alt}
+                        sizes="(min-width: 1280px) 20vw, (min-width: 640px) 30vw, 50vw"
+                      />
 
                       {mode === "select" && (
                         <button
@@ -270,12 +283,12 @@ export default function MediaLibrary({
                         {photo.night && (
                           <span className="annotation bg-night/85 px-2 py-1 text-accent">Evening</span>
                         )}
-                        {needsDescription(photo.alt) && (
+                        {mode === "manage" && needsDescription(photo.alt) && (
                           <span
                             title="This photograph still needs a description"
                             className="annotation bg-night/85 px-2 py-1 text-accent"
                           >
-                            Alt?
+                            Describe
                           </span>
                         )}
                       </span>
@@ -302,6 +315,12 @@ export default function MediaLibrary({
                 );
               })}
             </ul>
+          )}
+
+          {visible.length > shown && (
+            <Btn type="button" className="self-center" onClick={() => setShown((n) => n + PAGE)}>
+              Show more — {visible.length - shown} left
+            </Btn>
           )}
 
           {mode === "manage" && editingPhoto && (
@@ -399,12 +418,12 @@ function PhotoEditor({
 
         <div className="grid grid-cols-2 gap-3">
           <figure className="flex flex-col gap-2">
-            <Thumb src={photo.src} alt={photo.alt} />
+            <Thumb src={photo.src} alt={photo.alt} sizes="320px" />
             <figcaption className="annotation text-on-surface-faint">Daylight</figcaption>
           </figure>
           <figure className="flex flex-col gap-2">
             {evening ? (
-              <Thumb src={evening.src} alt={evening.alt} />
+              <Thumb src={evening.src} alt={evening.alt} sizes="320px" />
             ) : (
               <div className="grid aspect-[4/3] place-items-center border border-dashed border-rule px-4 text-center text-xs text-on-surface-faint">
                 No evening version
