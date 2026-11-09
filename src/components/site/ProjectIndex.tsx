@@ -19,9 +19,10 @@ const SECTOR: Record<Typology, string> = {
   Hospitality: "Hospitality",
   Retail: "Retail",
   Healthcare: "Healthcare",
+  Mosque: "Mosque",
 };
 
-const FILTERS = ["All", "Residential", "Workplace", "Hospitality", "Retail", "Healthcare"] as const;
+const FILTERS = ["All", "Residential", "Workplace", "Hospitality", "Retail", "Healthcare", "Mosque"] as const;
 type Filter = (typeof FILTERS)[number];
 
 const isModified = (e: MouseEvent) => e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0;

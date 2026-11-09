@@ -2,6 +2,7 @@ import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import type { QueryCtx } from "./_generated/server";
 import type { Doc } from "./_generated/dataModel";
+import { internalMutation } from "./_generated/server";
 import { projectStage, typology } from "./schema";
 import { resolveMediaId, resolveMediaIds } from "./media";
 import { clean, now, requireStudio, slugify } from "./lib";
@@ -202,5 +203,35 @@ export const reorder = mutation({
     await Promise.all(
       ids.map((id, index) => ctx.db.patch(id, { order: index + 1, updatedAt: now() })),
     );
+  },
+});
+
+/**
+ * Put every draft that has a photograph on the site.
+ *
+ * Projects used to be created as drafts, so the first ones the studio
+ * uploaded never appeared and the site kept showing the sample content. This
+ * clears that in one go. Internal, so only the CLI may run it:
+ *   npx convex run projects:publishDrafts --prod
+ */
+export const publishDrafts = internalMutation({
+  args: {},
+  handler: async (ctx) => {
+    const rows = await ctx.db.query("projects").collect();
+    const published = [];
+    const waiting = [];
+    for (const row of rows) {
+      if (row.published) continue;
+      // Without a photograph a project would be on the site and still not
+      // show. The site takes the first of the gallery when there is no cover,
+      // so that counts here too.
+      if (!row.coverId && (row.galleryIds ?? []).length === 0) {
+        waiting.push(row.title);
+        continue;
+      }
+      await ctx.db.patch(row._id, { published: true, updatedAt: now() });
+      published.push(row.title);
+    }
+    return { published, needAPhotograph: waiting };
   },
 });

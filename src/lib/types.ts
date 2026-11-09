@@ -37,7 +37,8 @@ export type Typology =
   | "Hospitality"
   | "Retail"
   | "Healthcare"
-  | "Commercial";
+  | "Commercial"
+  | "Mosque";
 
 /**
  * Iconic designs and executes, so where a project has got to matters more than

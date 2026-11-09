@@ -13,6 +13,7 @@ export const typology = v.union(
   v.literal("Retail"),
   v.literal("Healthcare"),
   v.literal("Commercial"),
+  v.literal("Mosque"),
 );
 
 /** Iconic designs and executes, so a project's stage is real information. */

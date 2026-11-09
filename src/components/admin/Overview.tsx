@@ -51,9 +51,12 @@ export default function Overview() {
       label: "Projects",
       state: data.projects.onSite ? "live" : "seed",
       summary: `${count(data.projects.onSite, "project")} on the site · ${count(data.projects.drafts, "draft")}`,
-      attention: data.projects.withoutPhotos
-        ? `${count(data.projects.withoutPhotos, "published project")} without a photograph, so not shown`
-        : undefined,
+      attention:
+        data.projects.onSite === 0 && data.projects.drafts > 0
+          ? `Every project is still a draft, so visitors see the sample projects instead. Open one and switch Draft to Live.`
+          : data.projects.withoutPhotos
+            ? `${count(data.projects.withoutPhotos, "published project")} without a photograph, so not shown`
+            : undefined,
     },
     {
       href: "/admin/media",

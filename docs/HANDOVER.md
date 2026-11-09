@@ -102,7 +102,8 @@ After that they sign in at <https://iconic-architecture.vercel.app/admin> with t
 
 ## 6. Before launch
 
-- [ ] Replace or delete the seven placeholder projects, then print the monograph PDF again (`node scripts/build-monograph-pdf.mjs`)
+- [x] The studio's own projects are on the site, so the seven stock-photo placeholders never show — they only stand in while nothing is published
+- [ ] The monograph still runs on the imported sample spreads, so the book shows that stock work. Curate the spreads at `/admin` → Monograph, then print the PDF again (`node scripts/build-monograph-pdf.mjs`)
 - [ ] Get original exports of the studio's renders and upload them at `/admin`
 - [ ] Confirm project titles, descriptions and the services copy
 - [x] Real phone, WhatsApp, address, map and links in `/admin` → Settings — add an email there if the studio wants one on the site

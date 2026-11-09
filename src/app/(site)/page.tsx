@@ -31,6 +31,7 @@ const SECTOR: Record<Typology, string> = {
   Hospitality: "Hospitality",
   Retail: "Retail",
   Healthcare: "Healthcare",
+  Mosque: "Mosque",
 };
 
 const slideFor = (project: Project, src?: string): HeroSlide => ({

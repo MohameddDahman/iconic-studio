@@ -32,6 +32,7 @@ const TYPOLOGIES = [
   "Retail",
   "Healthcare",
   "Commercial",
+  "Mosque",
 ] as const;
 const STAGES = ["Built", "On site", "Design stage"] as const;
 
@@ -102,7 +103,9 @@ const blank = (): Draft => ({
   materials: "",
   facts: BLANK_FACTS,
   featured: false,
-  published: false,
+  // A project is written to be shown. It can still be taken off the site,
+  // but saving one should put it there, which is what the studio expects.
+  published: true,
   placeholder: false,
   coverId: undefined,
   galleryIds: [],
