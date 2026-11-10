@@ -13,7 +13,6 @@ import type * as auth from "../auth.js";
 import type * as http from "../http.js";
 import type * as lib from "../lib.js";
 import type * as media from "../media.js";
-import type * as migrate from "../migrate.js";
 import type * as projects from "../projects.js";
 import type * as seedImport from "../seedImport.js";
 import type * as settings from "../settings.js";
@@ -33,7 +32,6 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   lib: typeof lib;
   media: typeof media;
-  migrate: typeof migrate;
   projects: typeof projects;
   seedImport: typeof seedImport;
   settings: typeof settings;
