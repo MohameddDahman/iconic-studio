@@ -24,7 +24,7 @@ import { anyApi } from "convex/server";
 const MIN_PASSWORD = 10;
 
 /** The project's production deployment; override with --url. */
-const PRODUCTION = "https://whimsical-donkey-415.convex.cloud";
+const PRODUCTION = "https://tremendous-walrus-53.convex.cloud";
 
 const args = process.argv.slice(2);
 

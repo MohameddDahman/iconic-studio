@@ -1,12 +1,9 @@
 import "server-only";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../convex/_generated/api";
-import {
-  SEED_PROJECTS,
-  SEED_SETTINGS,
-  SEED_SPREADS,
-  SEED_TESTIMONIALS,
-} from "./seed";
+import { SEED_SETTINGS } from "./seed";
+import snapshot from "./snapshot.json";
+import baked from "./baked-photos.json";
 import type { Media, Project, Spread, StudioLink, StudioSettings, Testimonial } from "./types";
 
 /**
@@ -18,6 +15,22 @@ import type { Media, Project, Spread, StudioLink, StudioSettings, Testimonial } 
 
 const CONVEX_URL = process.env.NEXT_PUBLIC_CONVEX_URL;
 const client = CONVEX_URL ? new ConvexHttpClient(CONVEX_URL) : null;
+
+/**
+ * The studio's published records as last saved from Convex (scripts/bake-photos.mjs).
+ * If Convex cannot be reached, these stand in: the studio's own work, never samples.
+ */
+type Rows = Record<string, unknown>[];
+const SAVED = snapshot as unknown as { projects: Rows; spreads: Rows; testimonials: Rows; settings: Record<string, unknown> | null };
+
+/** Photographs prepared as plain files (see image-loader.ts) are served from those, not from Convex. */
+const PREPARED = baked as { uuids: Record<string, string>; shown: string[] };
+const SHOWN = new Set(PREPARED.shown);
+const prepared = (src: string) => {
+  const uuid = src.match(/\/api\/storage\/([0-9a-f-]{36})/)?.[1];
+  const id = uuid ? PREPARED.uuids[uuid] : undefined;
+  return id && SHOWN.has(id) ? `/media/live/${id}.webp` : src;
+};
 
 export const isConvexConfigured = Boolean(CONVEX_URL);
 
@@ -34,7 +47,7 @@ type RemoteMedia = {
 const toMedia = (m: RemoteMedia, fallbackAlt = ""): Media | null =>
   m
     ? {
-        src: m.src,
+        src: prepared(m.src),
         // A file called 16.jpg leaves its number as the description; that helps nobody.
         alt: /\p{L}/u.test(m.alt) ? m.alt : fallbackAlt,
         caption: m.caption,
@@ -45,7 +58,7 @@ const toMedia = (m: RemoteMedia, fallbackAlt = ""): Media | null =>
         ...(m.night
           ? {
               night: {
-                src: m.night.src,
+                src: prepared(m.night.src),
                 width: m.night.width,
                 height: m.night.height,
                 blurDataURL: m.night.blurDataURL,
@@ -60,7 +73,7 @@ async function fromConvex<T>(run: () => Promise<T>, label: string): Promise<T | 
   try {
     return await run();
   } catch (error) {
-    console.warn(`[content] Convex query "${label}" failed, using seed content.`, error);
+    console.warn(`[content] Convex query "${label}" failed, using the saved copy.`, error);
     return null;
   }
 }
@@ -68,8 +81,8 @@ async function fromConvex<T>(run: () => Promise<T>, label: string): Promise<T | 
 /* ---- Projects ------------------------------------------------------------ */
 
 export async function getProjects(): Promise<Project[]> {
-  const rows = await fromConvex(() => client!.query(api.projects.listPublished, {}), "projects.listPublished");
-  if (!rows || rows.length === 0) return SEED_PROJECTS;
+  const rows = ((await fromConvex(() => client!.query(api.projects.listPublished, {}), "projects.listPublished")) ??
+    SAVED.projects) as Rows;
 
   const projects = rows.flatMap((r: Record<string, unknown>): Project[] => {
     const gallery = ((r.gallery ?? []) as RemoteMedia[])
@@ -99,7 +112,7 @@ export async function getProjects(): Promise<Project[]> {
       order: Number(r.order ?? 0),
     } satisfies Project];
   });
-  return projects.length ? projects : SEED_PROJECTS;
+  return projects;
 }
 
 export async function getProject(slug: string): Promise<Project | null> {
@@ -116,11 +129,10 @@ export async function getFeaturedProjects(limit = 3): Promise<Project[]> {
 /* ---- Testimonials -------------------------------------------------------- */
 
 export async function getTestimonials(): Promise<Testimonial[]> {
-  const rows = await fromConvex(
+  const rows = ((await fromConvex(
     () => client!.query(api.testimonials.listPublished, {}),
     "testimonials.listPublished",
-  );
-  if (!rows || rows.length === 0) return SEED_TESTIMONIALS;
+  )) ?? SAVED.testimonials) as Rows;
 
   return rows.map((r: Record<string, unknown>) => ({
     id: String(r._id),
@@ -138,8 +150,8 @@ export async function getTestimonials(): Promise<Testimonial[]> {
 /* ---- Monograph spreads --------------------------------------------------- */
 
 export async function getSpreads(): Promise<Spread[]> {
-  const rows = await fromConvex(() => client!.query(api.spreads.listPublished, {}), "spreads.listPublished");
-  if (!rows || rows.length === 0) return SEED_SPREADS;
+  const rows = ((await fromConvex(() => client!.query(api.spreads.listPublished, {}), "spreads.listPublished")) ??
+    SAVED.spreads) as Rows;
 
   return rows
     .map((r: Record<string, unknown>): Spread | null => {
@@ -162,7 +174,7 @@ export async function getSpreads(): Promise<Spread[]> {
 /* ---- Settings ------------------------------------------------------------ */
 
 export async function getSettings(): Promise<StudioSettings> {
-  const row = await fromConvex(() => client!.query(api.settings.get, {}), "settings.get");
+  const row = (await fromConvex(() => client!.query(api.settings.get, {}), "settings.get")) ?? SAVED.settings;
   if (!row) return SEED_SETTINGS;
   const r = row as Record<string, unknown>;
   return {

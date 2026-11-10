@@ -8,7 +8,7 @@ import TransitionLink from "@/components/motion/TransitionLink";
 import { cn } from "@/lib/utils";
 import type { Media } from "@/lib/types";
 import { STUDIO } from "@/lib/routes";
-import mark from "../../../public/brand/iconic-mark.png";
+import mark from "../../../public/brand/iconic-mark-hero.webp";
 
 export interface HeroSlide {
   media: Media;

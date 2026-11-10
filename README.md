@@ -20,7 +20,7 @@ The site runs immediately with no backend. Until Convex is connected it renders 
 
 ## Connecting the backend
 
-The studio desk at `/admin` runs on Convex: project `iconic-studio` in Ahmed Fawzy's team, dev deployment `brave-toucan-31`. On a new machine, log in to that team and connect:
+The studio desk at `/admin` runs on Convex: project `iconic-studio` in Ahmed Fawzy's team, dev deployment `flippant-hornet-899`. On a new machine, log in to that team and connect:
 
 ```bash
 npx convex dev
@@ -43,10 +43,10 @@ node scripts/create-desk-account.mjs --prod     # the live site
 
 The address has to be in `ADMIN_EMAILS` already; anything else is refused before a row is written. Taking an address off the list locks it out immediately, even mid-session.
 
-The production deployment is `whimsical-donkey-415`, with its own keys, `ADMIN_EMAILS` and `SITE_URL`. To push the functions to it:
+The production deployment is `tremendous-walrus-53`, with its own keys, `ADMIN_EMAILS` and `SITE_URL`. To push the functions to it:
 
 ```bash
-CONVEX_DEPLOYMENT=prod:whimsical-donkey-415 npx convex deploy
+CONVEX_DEPLOYMENT=prod:tremendous-walrus-53 npx convex deploy
 ```
 
 ## Where it is deployed
@@ -55,7 +55,7 @@ CONVEX_DEPLOYMENT=prod:whimsical-donkey-415 npx convex deploy
 |---|---|
 | Repository | <https://github.com/MohameddDahman/iconic-studio> (private) |
 | Site | <https://iconic-architecture.vercel.app> — Vercel project `iconic-studio`. The first address, iconic-studio-six.vercel.app, forwards here |
-| Backend | Convex `whimsical-donkey-415` (production) and `brave-toucan-31` (dev) |
+| Backend | Convex `tremendous-walrus-53` (production) and `flippant-hornet-899` (dev) |
 
 Vercel holds `NEXT_PUBLIC_CONVEX_URL` and `NEXT_PUBLIC_CONVEX_SITE_URL` on all three environments; the pages are built against production Convex. Deploy again with:
 

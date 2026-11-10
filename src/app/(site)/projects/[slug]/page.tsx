@@ -24,7 +24,13 @@ export async function generateMetadata({ params }: PageProps<"/projects/[slug]">
       title: project.title,
       description: project.brief,
       // A share preview needs a photograph a messenger is willing to fetch.
-      images: [{ url: `/_next/image?url=${encodeURIComponent(project.cover.src)}&w=1200&q=80` }],
+      images: [
+        {
+          url: project.cover.src.startsWith("/media/live/")
+            ? project.cover.src.replace(/\.webp$/, ".og.jpg")
+            : project.cover.src,
+        },
+      ],
     },
   };
 }

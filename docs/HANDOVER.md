@@ -80,15 +80,15 @@ Every save reports whether it worked, and the editors ask before discarding unsa
 
 | | Deployment | `SITE_URL` |
 |---|---|---|
-| Live site | `whimsical-donkey-415` (production) | `https://iconic-architecture.vercel.app` |
-| Local | `brave-toucan-31` (dev, URLs in `.env.local`) | `http://localhost:3000` |
+| Live site | `tremendous-walrus-53` (production) | `https://iconic-architecture.vercel.app` |
+| Local | `flippant-hornet-899` (dev, URLs in `.env.local`) | `http://localhost:3000` |
 
 Both carry their own sign-in keys (`JWT_PRIVATE_KEY`, `JWKS`) and their own `ADMIN_EMAILS`, and both hold the full content — the import was run against each.
 
 **Nobody has an account yet.** Creating one means choosing a password, which only a person can do. `ADMIN_EMAILS` currently allows a single placeholder address, `desk@iconic-studio.local`, so the desk can be opened once and looked at; replace it with the studio's real addresses:
 
 ```bash
-CONVEX_DEPLOYMENT=prod:whimsical-donkey-415 npx convex env set ADMIN_EMAILS "ahmed@…,studio@…"
+CONVEX_DEPLOYMENT=prod:tremendous-walrus-53 npx convex env set ADMIN_EMAILS "ahmed@…,studio@…"
 ```
 
 Then make each person an account, with them at the keyboard for the password:

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import Image from "next/image";
 import { ConvexError } from "convex/values";
+import baked from "@/lib/baked-photos.json";
 import { cn } from "@/lib/utils";
 
 export function DeskHeader({
@@ -177,26 +178,22 @@ export function Chip({
   );
 }
 
-/** Only photographs held in Convex storage can go through the image optimiser. */
-const canOptimise = (src: string) => /\.convex\.(cloud|site)\//.test(src);
+const PREPARED = (baked as { uuids: Record<string, string> }).uuids;
 
 /**
- * A photograph on the desk. The originals run to several megabytes each, so a
- * page of them would download gigabytes just to draw thumbnails; this asks for
- * a copy the size it is actually shown at. It fills its positioned parent.
+ * Photographs already prepared as plain files are drawn from their 400px copy,
+ * so browsing the library costs nothing against the Convex download allowance.
+ * A photograph uploaded since is drawn from Convex as it is.
  */
+const deskLoader = ({ src }: { src: string; width: number }) => {
+  const uuid = src.match(/\/api\/storage\/([0-9a-f-]{36})/)?.[1];
+  const id = uuid ? PREPARED[uuid] : undefined;
+  return id ? `/media/live/${id}.w400.webp` : src;
+};
+
+/** A photograph on the desk, filling its positioned parent. */
 export function DeskPhoto({ src, alt, sizes = "260px" }: { src: string; alt: string; sizes?: string }) {
-  return (
-    <Image
-      src={src}
-      alt={alt}
-      fill
-      sizes={sizes}
-      quality={60}
-      unoptimized={!canOptimise(src)}
-      className="object-cover"
-    />
-  );
+  return <Image src={src} alt={alt} fill sizes={sizes} loader={deskLoader} className="object-cover" />;
 }
 
 /** A photograph thumbnail, with an optional label in its corner. */
