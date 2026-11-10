@@ -11,7 +11,8 @@ import { img } from "@/lib/media";
 import credits from "@/lib/media-credits.json";
 import { getSettings } from "@/lib/content";
 
-export const revalidate = 60;
+// Each refresh reads Convex, so five minutes keeps a busy day inside the free allowance.
+export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: "Studio",

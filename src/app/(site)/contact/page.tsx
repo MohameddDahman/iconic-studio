@@ -5,7 +5,8 @@ import { STUDIO } from "@/lib/routes";
 import { getSettings } from "@/lib/content";
 import { mapEmbedSrc, mapPlaceId, telHref, whatsappHref } from "@/lib/contact";
 
-export const revalidate = 60;
+// Each refresh reads Convex, so five minutes keeps a busy day inside the free allowance.
+export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: "Contact",

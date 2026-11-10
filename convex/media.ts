@@ -1,5 +1,5 @@
 import { ConvexError, v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { internalQuery, mutation, query } from "./_generated/server";
 import type { Doc, Id } from "./_generated/dataModel";
 import type { QueryCtx } from "./_generated/server";
 import { clean, now, requireStudio } from "./lib";
@@ -156,6 +156,18 @@ export const remove = mutation({
     await ctx.storage.delete(doc.storageId);
     await ctx.db.delete(id);
   },
+});
+
+/**
+ * Every photograph and where its file is, for scripts/bake-photos.mjs, which
+ * prepares new ones as plain files for the site. Command line only.
+ */
+export const files = internalQuery({
+  args: {},
+  handler: async (ctx) =>
+    await Promise.all(
+      (await ctx.db.query("media").collect()).map(async (m) => ({ id: m._id, url: await ctx.storage.getUrl(m.storageId) })),
+    ),
 });
 
 /** The whole library, newest first — the picker and the Photographs desk. */

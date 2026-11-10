@@ -9,7 +9,8 @@ import { DISCIPLINES, STAGES } from "@/lib/practice";
 import { getFeaturedProjects, getProjects, getSpreads, getTestimonials } from "@/lib/content";
 import type { Project, Typology } from "@/lib/types";
 
-export const revalidate = 60;
+// Each refresh reads Convex, so five minutes keeps a busy day inside the free allowance.
+export const revalidate = 300;
 
 /** The photographs the reel prefers, when those projects exist. */
 const HERO_PREFERENCE = [

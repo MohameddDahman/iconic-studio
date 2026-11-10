@@ -147,7 +147,7 @@ export default function ReviewsDesk() {
 
       <div className="mb-6 flex flex-col gap-3 empty:hidden">
         {list.error && <Notice tone="error">{list.error}</Notice>}
-        {editor.done && !editing && <Notice tone="success">Saved.</Notice>}
+        {editor.done && !editing && <Notice tone="success">Saved. The site shows the change within five minutes.</Notice>}
       </div>
 
       {editing && (

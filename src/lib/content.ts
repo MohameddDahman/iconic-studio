@@ -1,4 +1,5 @@
 import "server-only";
+import { cache } from "react";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../convex/_generated/api";
 import { SEED_SETTINGS } from "./seed";
@@ -80,7 +81,7 @@ async function fromConvex<T>(run: () => Promise<T>, label: string): Promise<T | 
 
 /* ---- Projects ------------------------------------------------------------ */
 
-export async function getProjects(): Promise<Project[]> {
+async function loadProjects(): Promise<Project[]> {
   const rows = ((await fromConvex(() => client!.query(api.projects.listPublished, {}), "projects.listPublished")) ??
     SAVED.projects) as Rows;
 
@@ -115,6 +116,9 @@ export async function getProjects(): Promise<Project[]> {
   return projects;
 }
 
+/** Read once per page, however many parts of the page ask. */
+export const getProjects = cache(loadProjects);
+
 export async function getProject(slug: string): Promise<Project | null> {
   const all = await getProjects();
   return all.find((p) => p.slug === slug) ?? null;
@@ -128,7 +132,7 @@ export async function getFeaturedProjects(limit = 3): Promise<Project[]> {
 
 /* ---- Testimonials -------------------------------------------------------- */
 
-export async function getTestimonials(): Promise<Testimonial[]> {
+async function loadTestimonials(): Promise<Testimonial[]> {
   const rows = ((await fromConvex(
     () => client!.query(api.testimonials.listPublished, {}),
     "testimonials.listPublished",
@@ -147,9 +151,11 @@ export async function getTestimonials(): Promise<Testimonial[]> {
   }));
 }
 
+export const getTestimonials = cache(loadTestimonials);
+
 /* ---- Monograph spreads --------------------------------------------------- */
 
-export async function getSpreads(): Promise<Spread[]> {
+async function loadSpreads(): Promise<Spread[]> {
   const rows = ((await fromConvex(() => client!.query(api.spreads.listPublished, {}), "spreads.listPublished")) ??
     SAVED.spreads) as Rows;
 
@@ -171,9 +177,11 @@ export async function getSpreads(): Promise<Spread[]> {
     .filter((s): s is Spread => Boolean(s));
 }
 
+export const getSpreads = cache(loadSpreads);
+
 /* ---- Settings ------------------------------------------------------------ */
 
-export async function getSettings(): Promise<StudioSettings> {
+async function loadSettings(): Promise<StudioSettings> {
   const row = (await fromConvex(() => client!.query(api.settings.get, {}), "settings.get")) ?? SAVED.settings;
   if (!row) return SEED_SETTINGS;
   const r = row as Record<string, unknown>;
@@ -191,3 +199,5 @@ export async function getSettings(): Promise<StudioSettings> {
     links: (r.links ?? []) as StudioLink[],
   };
 }
+
+export const getSettings = cache(loadSettings);

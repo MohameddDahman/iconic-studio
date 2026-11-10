@@ -76,7 +76,7 @@ At handover every page passed: each wheel notch moves the page exactly one notch
 
 Every save reports whether it worked, and the editors ask before discarding unsaved changes.
 
-**Where it runs.** Convex project `iconic-studio` in Ahmed Fawzy's team, with two deployments:
+**Where it runs.** Convex project `iconic-studio` on the studio's second Convex account (moved in November 2026), with two deployments:
 
 | | Deployment | `SITE_URL` |
 |---|---|---|
@@ -125,7 +125,9 @@ Without `--replace` the import stops rather than writing over rows that already 
 ## 8. Known limitations
 
 - **Where it is deployed.** The site is on Vercel (project `iconic-studio`, <https://iconic-architecture.vercel.app>), built from <https://github.com/MohameddDahman/iconic-studio>. `npx vercel deploy --prod` publishes again from this folder.
-- **Convex free plan: 1 GB of file storage.** Photographs are resized in the browser on upload, to 1920px on the long edge at WebP quality 78, so a photograph is usually 100-400 KB. The desk's Photographs screen lists what each one costs. The desk is tested end to end on a throwaway local Convex backend, never with the live account.
+- **Free plans, and how the site stays inside them.** Convex's free plan allows 1 GB of stored files, 1 GB of downloads and 1 GB of database reads a month; in November 2026 the first account was switched off after full-size photographs pushed downloads to 13 GB, and the studio moved to a new account (production `tremendous-walrus-53`, dev `flippant-hornet-899`). Vercel's free image resizing also ran out. So the site no longer resizes anything on request: every photograph it shows is prepared as plain files in `public/media/live` (400px, 800px and full size), and Convex only answers small data queries, at most once every five minutes per page.
+- **After the studio adds or changes photographs**, run `node scripts/bake-photos.mjs`, then commit and deploy. It downloads only the new photographs, once each, prepares them, and saves a copy of the published content in `src/lib/snapshot.json`. Until then a new photograph still shows, straight from Convex at full size. If Convex cannot be reached at all, the site shows that saved copy, never sample projects.
+- **Uploads are resized in the browser** to 1920px on the long edge at WebP quality 78, so a photograph is usually 100-400 KB. The full-size originals of the first 438 are kept off the site, in a backup folder on the developer's machine. The desk is tested end to end on a throwaway local Convex backend, never with the live account.
 - **Password resets go through the developer.** There is no email provider, so for a forgotten password delete that person's row in `authAccounts` in the Convex dashboard, then run `node scripts/create-desk-account.mjs` for them again.
 - **The seed content's evening pairs stay in code.** Photographs uploaded at `/admin` get their evening version there; the seed set's pairs are still declared in `src/lib/seed.ts`.
 - **The monograph PDF is a snapshot.** Request a copy on `/monograph` hands out `public/monograph/iconic-volume-i.pdf`, printed from the book's own pages (at `/monograph/print`, which nothing links to) so it matches the site page for page. It does not follow edits by itself: after changing the monograph or its projects at `/admin`, run `node scripts/build-monograph-pdf.mjs` and deploy. For now it includes the seven stock-photo placeholder projects, like the book on the site.

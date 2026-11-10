@@ -601,7 +601,7 @@ export default function ProjectsDesk() {
 
       <div className="mb-6 flex flex-col gap-3 empty:hidden">
         {register.error && <Notice tone="error">{register.error}</Notice>}
-        {editor.done && <Notice tone="success">Saved.</Notice>}
+        {editor.done && <Notice tone="success">Saved. The site shows the change within five minutes.</Notice>}
       </div>
 
       {projects === undefined && <p className="annotation text-on-surface-faint">Loading the register…</p>}

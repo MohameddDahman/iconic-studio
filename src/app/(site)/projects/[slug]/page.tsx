@@ -6,7 +6,8 @@ import ProjectGallery from "@/components/site/ProjectGallery";
 import NextProject from "@/components/site/NextProject";
 import { getProject, getProjects } from "@/lib/content";
 
-export const revalidate = 60;
+// Each refresh reads Convex, so five minutes keeps a busy day inside the free allowance.
+export const revalidate = 300;
 
 export async function generateStaticParams() {
   const projects = await getProjects();

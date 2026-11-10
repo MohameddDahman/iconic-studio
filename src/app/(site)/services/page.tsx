@@ -9,7 +9,8 @@ import { DISCIPLINES, STAGES } from "@/lib/practice";
 import { img } from "@/lib/media";
 
 // The footer reads the studio's details from Convex, so this page refreshes like the rest.
-export const revalidate = 60;
+// Each refresh reads Convex, so five minutes keeps a busy day inside the free allowance.
+export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: "Services",

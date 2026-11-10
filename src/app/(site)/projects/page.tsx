@@ -3,7 +3,8 @@ import PageHeader from "@/components/site/PageHeader";
 import ProjectIndex from "@/components/site/ProjectIndex";
 import { getProjects } from "@/lib/content";
 
-export const revalidate = 60;
+// Each refresh reads Convex, so five minutes keeps a busy day inside the free allowance.
+export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: "Projects",

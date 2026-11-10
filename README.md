@@ -20,7 +20,7 @@ The site runs immediately with no backend. Until Convex is connected it renders 
 
 ## Connecting the backend
 
-The studio desk at `/admin` runs on Convex: project `iconic-studio` in Ahmed Fawzy's team, dev deployment `flippant-hornet-899`. On a new machine, log in to that team and connect:
+The studio desk at `/admin` runs on Convex: project `iconic-studio` on the studio's second Convex account, dev deployment `flippant-hornet-899`. On a new machine, log in to that team and connect:
 
 ```bash
 npx convex dev
