@@ -85,7 +85,7 @@ async function prepare(file: File) {
  */
 export function useMediaUpload() {
   const generateUploadUrl = useMutation(api.media.generateUploadUrl);
-  const createMedia = useMutation(api.media.create);
+  const createMany = useMutation(api.media.createMany);
   const [items, setItems] = useState<UploadItem[]>([]);
 
   const patch = useCallback((id: string, next: Partial<UploadItem>) => {
@@ -111,6 +111,28 @@ export function useMediaUpload() {
       setItems((prev) => [...queued, ...skipped, ...prev]);
 
       const ids: Id<"media">[] = [];
+      const failed = (id: string, error: unknown) =>
+        patch(id, {
+          status: "error",
+          // A dropped connection reaches fetch as a bare TypeError.
+          error: error instanceof TypeError ? "Connection lost — try again" : describeError(error),
+        });
+
+      // Files are stored one by one, but recorded a dozen at a time: each record
+      // makes every open list of the library read itself again.
+      type Pending = { itemId: string; record: Parameters<typeof createMany>[0]["items"][number] };
+      let pending: Pending[] = [];
+      const flush = async () => {
+        if (!pending.length) return;
+        const batch = pending;
+        pending = [];
+        try {
+          ids.push(...(await createMany({ items: batch.map((p) => p.record) })));
+          for (const p of batch) patch(p.itemId, { status: "done", progress: 1 });
+        } catch (error) {
+          for (const p of batch) failed(p.itemId, error);
+        }
+      };
 
       for (let i = 0; i < list.length; i++) {
         const file = list[i];
@@ -129,29 +151,26 @@ export function useMediaUpload() {
           const { storageId } = (await res.json()) as { storageId: Id<"_storage"> };
 
           patch(item.id, { status: "saving", progress: 0.8 });
-
-          const id = await createMedia({
-            storageId,
-            // A filename is a poor alt text, but an empty one is worse. It is
-            // editable in the library, and flagged there until it is written.
-            alt: altFallback || file.name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " "),
-            width,
-            height,
-            blurDataURL,
-            bytes: output.size,
-            contentType: output.type,
+          pending.push({
+            itemId: item.id,
+            record: {
+              storageId,
+              // A filename is a poor alt text, but an empty one is worse. It is
+              // editable in the library, and flagged there until it is written.
+              alt: altFallback || file.name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " "),
+              width,
+              height,
+              blurDataURL,
+              bytes: output.size,
+              contentType: output.type,
+            },
           });
-
-          ids.push(id);
-          patch(item.id, { status: "done", progress: 1 });
+          if (pending.length >= 12) await flush();
         } catch (error) {
-          patch(item.id, {
-            status: "error",
-            // A dropped connection reaches fetch as a bare TypeError.
-            error: error instanceof TypeError ? "Connection lost — try again" : describeError(error),
-          });
+          failed(item.id, error);
         }
       }
+      await flush();
 
       // Clear the finished rows once they have been seen.
       setTimeout(() => {
@@ -160,7 +179,7 @@ export function useMediaUpload() {
 
       return ids;
     },
-    [generateUploadUrl, createMedia, patch],
+    [generateUploadUrl, createMany, patch],
   );
 
   return { upload, items };

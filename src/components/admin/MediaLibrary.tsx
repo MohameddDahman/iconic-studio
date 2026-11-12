@@ -156,7 +156,14 @@ export default function MediaLibrary({
   const [filter, setFilter] = useState<Filter>("all");
   const [shown, setShown] = useState(PAGE);
 
-  const uses = useMemo(() => new Map((usage ?? []).map((entry) => [entry.id, entry.uses])), [usage]);
+  const uses = useMemo(() => {
+    const map = new Map((usage ?? []).map((entry) => [entry.id, [...entry.uses]]));
+    // Evening versions come from the list already loaded, not a second full read.
+    for (const photo of media ?? []) {
+      if (photo.nightId) map.set(photo.nightId, [...(map.get(photo.nightId) ?? []), `Evening version of “${photo.alt}”`]);
+    }
+    return map;
+  }, [usage, media]);
   const evenings = useMemo(
     () => new Set((media ?? []).flatMap((photo) => (photo.nightId ? [photo.nightId] : []))),
     [media],

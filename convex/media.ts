@@ -78,6 +78,34 @@ export const generateUploadUrl = mutation({
 });
 
 /** Step two: record what was uploaded, with the dimensions measured in the browser. */
+const photoFields = {
+  storageId: v.id("_storage"),
+  alt: v.string(),
+  caption: v.optional(v.string()),
+  width: v.number(),
+  height: v.number(),
+  blurDataURL: v.optional(v.string()),
+  bytes: v.optional(v.number()),
+  contentType: v.optional(v.string()),
+};
+
+/**
+ * Record a batch of uploads in one write. Every screen that lists the library
+ * reads all of it again after each write, so saving photographs one at a time
+ * multiplies the database reads by the size of the batch.
+ */
+export const createMany = mutation({
+  args: { items: v.array(v.object(photoFields)) },
+  handler: async (ctx, { items }) => {
+    await requireStudio(ctx);
+    const ids: Id<"media">[] = [];
+    for (const item of items) {
+      ids.push(await ctx.db.insert("media", { ...item, alt: clean(item.alt, 300), createdAt: now() }));
+    }
+    return ids;
+  },
+});
+
 export const create = mutation({
   args: {
     storageId: v.id("_storage"),
@@ -204,9 +232,8 @@ export const usage = query({
       add(spread.mediaId, `Monograph — ${spread.title}`);
       add(spread.mediaBId, `Monograph — ${spread.title} (inset)`);
     }
-    for (const photo of await ctx.db.query("media").collect()) {
-      add(photo.nightId, `Evening version of “${photo.alt}”`);
-    }
+    // Evening versions are worked out by the library from the list it already
+    // has; reading every photograph here again would cost a full read per change.
 
     return [...uses.entries()].map(([id, labels]) => ({ id, uses: labels }));
   },

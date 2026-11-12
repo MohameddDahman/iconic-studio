@@ -8,8 +8,8 @@ import { getProjects, getSettings, getSpreads } from "@/lib/content";
 import { buildBook } from "@/lib/book";
 import copy from "@/lib/monograph-pdf.json";
 
-// Each refresh reads Convex, so five minutes keeps a busy day inside the free allowance.
-export const revalidate = 300;
+// Content is read from the data cache, refreshed when the desk saves (app/api/refresh); this is only a backstop.
+export const revalidate = 3600;
 
 /** The book as a PDF, printed from its own pages by scripts/build-monograph-pdf.mjs. */
 const COPY_HREF = "/monograph/iconic-volume-i.pdf";

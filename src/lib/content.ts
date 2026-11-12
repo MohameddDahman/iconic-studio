@@ -15,7 +15,13 @@ import type { Media, Project, Spread, StudioLink, StudioSettings, Testimonial } 
  */
 
 const CONVEX_URL = process.env.NEXT_PUBLIC_CONVEX_URL;
-const client = CONVEX_URL ? new ConvexHttpClient(CONVEX_URL) : null;
+/**
+ * Every read is kept in the data cache until the desk says something changed
+ * (app/api/refresh), so ordinary visits cost Convex nothing.
+ */
+const cachedFetch: typeof fetch = (input, init) =>
+  fetch(input, { ...init, cache: "force-cache", next: { revalidate: 60 * 60 * 24, tags: ["content"] } });
+const client = CONVEX_URL ? new ConvexHttpClient(CONVEX_URL, { fetch: cachedFetch }) : null;
 
 /**
  * The studio's published records as last saved from Convex (scripts/bake-photos.mjs).
@@ -24,13 +30,17 @@ const client = CONVEX_URL ? new ConvexHttpClient(CONVEX_URL) : null;
 type Rows = Record<string, unknown>[];
 const SAVED = snapshot as unknown as { projects: Rows; spreads: Rows; testimonials: Rows; settings: Record<string, unknown> | null };
 
-/** Photographs prepared as plain files (see image-loader.ts) are served from those, not from Convex. */
+/**
+ * Photographs prepared as plain files are served from those; any other stored
+ * photograph is sized once by /photo/ and cached (see image-loader.ts).
+ */
 const PREPARED = baked as { uuids: Record<string, string>; shown: string[] };
 const SHOWN = new Set(PREPARED.shown);
 const prepared = (src: string) => {
   const uuid = src.match(/\/api\/storage\/([0-9a-f-]{36})/)?.[1];
-  const id = uuid ? PREPARED.uuids[uuid] : undefined;
-  return id && SHOWN.has(id) ? `/media/live/${id}.webp` : src;
+  if (!uuid) return src;
+  const id = PREPARED.uuids[uuid];
+  return id && SHOWN.has(id) ? `/media/live/${id}.webp` : `/photo/${uuid}.webp`;
 };
 
 export const isConvexConfigured = Boolean(CONVEX_URL);

@@ -6,8 +6,8 @@ import ProjectGallery from "@/components/site/ProjectGallery";
 import NextProject from "@/components/site/NextProject";
 import { getProject, getProjects } from "@/lib/content";
 
-// Each refresh reads Convex, so five minutes keeps a busy day inside the free allowance.
-export const revalidate = 300;
+// Content is read from the data cache, refreshed when the desk saves (app/api/refresh); this is only a backstop.
+export const revalidate = 3600;
 
 export async function generateStaticParams() {
   const projects = await getProjects();
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: PageProps<"/projects/[slug]">
       // A share preview needs a photograph a messenger is willing to fetch.
       images: [
         {
-          url: project.cover.src.startsWith("/media/live/")
+          url: /^\/(media\/live|photo)\//.test(project.cover.src)
             ? project.cover.src.replace(/\.webp$/, ".og.jpg")
             : project.cover.src,
         },

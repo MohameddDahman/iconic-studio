@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import Image from "next/image";
 import { ConvexError } from "convex/values";
+import { useAuthToken } from "@convex-dev/auth/react";
 import baked from "@/lib/baked-photos.json";
 import { cn } from "@/lib/utils";
 
@@ -183,12 +184,13 @@ const PREPARED = (baked as { uuids: Record<string, string> }).uuids;
 /**
  * Photographs already prepared as plain files are drawn from their 400px copy,
  * so browsing the library costs nothing against the Convex download allowance.
- * A photograph uploaded since is drawn from Convex as it is.
+ * A photograph uploaded since is sized once by /photo/ and cached.
  */
 const deskLoader = ({ src }: { src: string; width: number }) => {
   const uuid = src.match(/\/api\/storage\/([0-9a-f-]{36})/)?.[1];
-  const id = uuid ? PREPARED[uuid] : undefined;
-  return id ? `/media/live/${id}.w400.webp` : src;
+  if (!uuid) return src;
+  const id = PREPARED[uuid];
+  return id ? `/media/live/${id}.w400.webp` : `/photo/${uuid}.w400.webp`;
 };
 
 /** A photograph on the desk, filling its positioned parent. */
@@ -248,6 +250,7 @@ export function useRun() {
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const token = useAuthToken();
 
   useEffect(() => {
     const pending = timer;
@@ -261,6 +264,10 @@ export function useRun() {
     clearTimeout(timer.current);
     try {
       await task();
+      // The public pages keep what they last read; ask them to read the change.
+      if (token) {
+        void fetch("/api/refresh", { method: "POST", headers: { authorization: `Bearer ${token}` } }).catch(() => {});
+      }
       setDone(true);
       timer.current = setTimeout(() => setDone(false), 2600);
       return true;
@@ -270,7 +277,7 @@ export function useRun() {
     } finally {
       setBusy(false);
     }
-  }, []);
+  }, [token]);
 
   const clearError = useCallback(() => setError(null), []);
 

@@ -4,8 +4,8 @@ import { buildBook, yearsOf } from "@/lib/book";
 import { getProjects, getSettings, getSpreads } from "@/lib/content";
 import { STUDIO } from "@/lib/routes";
 
-// Each refresh reads Convex, so five minutes keeps a busy day inside the free allowance.
-export const revalidate = 300;
+// Content is read from the data cache, refreshed when the desk saves (app/api/refresh); this is only a backstop.
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   // Printed into the PDF as its title.
