@@ -3,8 +3,9 @@ import { notFound } from "next/navigation";
 import { Reveal } from "@/components/motion/Reveal";
 import PairedImage from "@/components/site/PairedImage";
 import ProjectGallery from "@/components/site/ProjectGallery";
+import VideoGallery from "@/components/site/VideoGallery";
 import NextProject from "@/components/site/NextProject";
-import { getProject, getProjects } from "@/lib/content";
+import { getProject, getProjects, getVideos } from "@/lib/content";
 
 // Content is read from the data cache, refreshed when the desk saves (app/api/refresh); this is only a backstop.
 export const revalidate = 3600;
@@ -38,8 +39,9 @@ export async function generateMetadata({ params }: PageProps<"/projects/[slug]">
 
 export default async function ProjectPage({ params }: PageProps<"/projects/[slug]">) {
   const { slug } = await params;
-  const [project, all] = await Promise.all([getProject(slug), getProjects()]);
+  const [project, all, videos] = await Promise.all([getProject(slug), getProjects(), getVideos()]);
   if (!project) notFound();
+  const films = videos.filter((video) => video.projectSlug === project.slug);
 
   const index = all.findIndex((p) => p.slug === project.slug);
   const next = all[(index + 1) % all.length];
@@ -129,6 +131,8 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[slug
           </div>
         </div>
       </section>
+
+      {films.length > 0 && <VideoGallery videos={films} />}
 
       {project.gallery.length > 0 && <ProjectGallery images={project.gallery} />}
 

@@ -29,7 +29,7 @@ fs.mkdirSync(LIVE, { recursive: true });
 fs.mkdirSync(CACHE, { recursive: true });
 
 const projects = table("projects"), media = table("media"), spreads = table("spreads");
-const testimonials = table("testimonials"), settings = table("settings");
+const testimonials = table("testimonials"), settings = table("settings"), videos = table("videos");
 const files = JSON.parse(exec(["run", "media:files", "{}"]));
 const urlOf = new Map(files.map((f) => [f.id, f.url]));
 const byId = new Map(media.map((m) => [m._id, m]));
@@ -60,6 +60,7 @@ const snapshot = {
     return { ...rest, media: resolve(mediaId), mediaB: resolve(mediaBId) };
   }),
   testimonials: published(testimonials).map(strip),
+  videos: published(videos).map(({ _id, publicId, title, projectSlug, duration, width, height, compressed }) => ({ _id, publicId, title, projectSlug, duration, width, height, compressed })),
   settings: settings[0] ? (({ _creationTime, ...s }) => (void _creationTime, s))(settings[0]) : null,
 };
 

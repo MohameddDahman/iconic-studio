@@ -9,6 +9,7 @@ export type SheetKey =
   | "monograph"
   | "studio"
   | "reviews"
+  | "videos"
   | "contact";
 
 export interface Sheet {
@@ -26,7 +27,8 @@ export const SHEETS: Sheet[] = [
   { key: "monograph", href: "/monograph", label: "Monograph", sheet: "03", title: "The book" },
   { key: "studio", href: "/studio", label: "Studio", sheet: "04", title: "The studio" },
   { key: "reviews", href: "/reviews", label: "Reviews", sheet: "05", title: "Client reviews" },
-  { key: "contact", href: "/contact", label: "Contact", sheet: "06", title: "Start a project" },
+  { key: "videos", href: "/videos", label: "Videos", sheet: "06", title: "Films" },
+  { key: "contact", href: "/contact", label: "Contact", sheet: "07", title: "Start a project" },
 ];
 
 /** Where the site lives, until the studio has its own domain. */

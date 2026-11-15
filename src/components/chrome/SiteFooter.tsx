@@ -13,7 +13,8 @@ const contactClass = "inline-flex min-h-10 items-center transition-colors durati
 /** Anything that leaves the site opens in a new tab. */
 const away = { target: "_blank", rel: "noreferrer noopener" } as const;
 
-export default async function SiteFooter() {
+export default async function SiteFooter({ showVideos = false }: { showVideos?: boolean }) {
+  const sheets = NAV_SHEETS.filter((sheet) => sheet.key !== "videos" || showVideos);
   const settings = await getSettings();
   const year = new Date().getFullYear();
   const whatsapp = settings.whatsapp ? whatsappHref(settings.whatsapp, STUDIO.legalName) : "";
@@ -78,7 +79,7 @@ export default async function SiteFooter() {
           <nav aria-label="Footer" className="lg:col-span-3">
             <h2 className="eyebrow mb-6 text-on-surface-faint">Explore</h2>
             <ul className="space-y-1">
-              {NAV_SHEETS.map((sheet) => (
+              {sheets.map((sheet) => (
                 <li key={sheet.key}>
                   <TransitionLink
                     href={sheet.href}

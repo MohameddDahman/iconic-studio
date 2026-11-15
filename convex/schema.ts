@@ -96,6 +96,28 @@ export default defineSchema({
     order: v.number(),
   }).index("by_published_order", ["published", "order"]),
 
+  /**
+   * Short films. The files live on Cloudinary (folder iconic/videos), which makes
+   * the web copy and the poster when a clip is uploaded; only the id is kept here.
+   */
+  videos: defineTable({
+    publicId: v.string(),
+    title: v.string(),
+    /** The project the film belongs to, shown on its case study too. */
+    projectSlug: v.optional(v.string()),
+    duration: v.number(),
+    width: v.number(),
+    height: v.number(),
+    bytes: v.number(),
+    /** Compressed in the browser before upload, so the stored file is the web copy. */
+    compressed: v.optional(v.boolean()),
+    published: v.boolean(),
+    order: v.number(),
+    createdAt: v.number(),
+  })
+    .index("by_order", ["order"])
+    .index("by_published_order", ["published", "order"]),
+
   /** Singleton — there is only ever one row, fetched with .first(). */
   settings: defineTable({
     name: v.string(),

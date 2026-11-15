@@ -1,6 +1,5 @@
 import { revalidateTag } from "next/cache";
-import { ConvexHttpClient } from "convex/browser";
-import { api } from "../../../../convex/_generated/api";
+import { isStudioRequest } from "@/lib/studio-auth";
 
 /**
  * Called by the desk after a change is saved. The public pages read Convex
@@ -9,13 +8,7 @@ import { api } from "../../../../convex/_generated/api";
  * studio account may ask.
  */
 export async function POST(request: Request) {
-  const token = request.headers.get("authorization")?.replace(/^Bearer /, "");
-  const url = process.env.NEXT_PUBLIC_CONVEX_URL;
-  if (!token || !url) return Response.json({ ok: false }, { status: 401 });
-  const client = new ConvexHttpClient(url);
-  client.setAuth(token);
-  const viewer = await client.query(api.studio.viewer, {}).catch(() => null);
-  if (!viewer?.allowed) return Response.json({ ok: false }, { status: 401 });
+  if (!(await isStudioRequest(request))) return Response.json({ ok: false }, { status: 401 });
   revalidateTag("content", { expire: 0 });
   return Response.json({ ok: true });
 }

@@ -19,6 +19,7 @@ import type * as settings from "../settings.js";
 import type * as spreads from "../spreads.js";
 import type * as studio from "../studio.js";
 import type * as testimonials from "../testimonials.js";
+import type * as videos from "../videos.js";
 
 import type {
   ApiFromModules,
@@ -38,6 +39,7 @@ declare const fullApi: ApiFromModules<{
   spreads: typeof spreads;
   studio: typeof studio;
   testimonials: typeof testimonials;
+  videos: typeof videos;
 }>;
 
 /**

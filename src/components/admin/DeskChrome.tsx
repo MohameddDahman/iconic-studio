@@ -11,6 +11,7 @@ export const DESK = [
   { href: "/admin", label: "Overview", sheet: "X-900" },
   { href: "/admin/projects", label: "Projects", sheet: "X-910" },
   { href: "/admin/media", label: "Photographs", sheet: "X-920" },
+  { href: "/admin/videos", label: "Videos", sheet: "X-925" },
   { href: "/admin/reviews", label: "Reviews", sheet: "X-930" },
   { href: "/admin/monograph", label: "Monograph", sheet: "X-940" },
   { href: "/admin/settings", label: "Settings", sheet: "X-970" },

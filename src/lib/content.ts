@@ -6,6 +6,7 @@ import { SEED_SETTINGS } from "./seed";
 import snapshot from "./snapshot.json";
 import baked from "./baked-photos.json";
 import type { Media, Project, Spread, StudioLink, StudioSettings, Testimonial } from "./types";
+import type { Video } from "./video";
 
 /**
  * The public site reads from Convex on the server, so pages arrive complete
@@ -28,7 +29,13 @@ const client = CONVEX_URL ? new ConvexHttpClient(CONVEX_URL, { fetch: cachedFetc
  * If Convex cannot be reached, these stand in: the studio's own work, never samples.
  */
 type Rows = Record<string, unknown>[];
-const SAVED = snapshot as unknown as { projects: Rows; spreads: Rows; testimonials: Rows; settings: Record<string, unknown> | null };
+const SAVED = snapshot as unknown as {
+  projects: Rows;
+  spreads: Rows;
+  testimonials: Rows;
+  videos?: Rows;
+  settings: Record<string, unknown> | null;
+};
 
 /**
  * Photographs prepared as plain files are served from those; any other stored
@@ -188,6 +195,26 @@ async function loadSpreads(): Promise<Spread[]> {
 }
 
 export const getSpreads = cache(loadSpreads);
+
+/* ---- Films --------------------------------------------------------------- */
+
+async function loadVideos(): Promise<Video[]> {
+  const rows = ((await fromConvex(() => client!.query(api.videos.listPublished, {}), "videos.listPublished")) ??
+    SAVED.videos ??
+    []) as Rows;
+  return rows.map((r) => ({
+    id: String(r._id),
+    publicId: String(r.publicId),
+    title: String(r.title),
+    projectSlug: r.projectSlug ? String(r.projectSlug) : undefined,
+    duration: Number(r.duration ?? 0),
+    width: Number(r.width ?? 0),
+    height: Number(r.height ?? 0),
+    compressed: Boolean(r.compressed),
+  }));
+}
+
+export const getVideos = cache(loadVideos);
 
 /* ---- Settings ------------------------------------------------------------ */
 

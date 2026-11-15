@@ -28,7 +28,8 @@ function RollLabel({ children }: { children: string }) {
   );
 }
 
-export default function SiteHeader() {
+export default function SiteHeader({ showVideos = false }: { showVideos?: boolean }) {
+  const sheets = NAV_SHEETS.filter((sheet) => sheet.key !== "videos" || showVideos);
   const pathname = usePathname();
   const [surface, setSurface] = useState<Surface>("night");
   const [scrolled, setScrolled] = useState(false);
@@ -178,7 +179,7 @@ export default function SiteHeader() {
 
           <nav aria-label="Primary" className="hidden lg:block">
             <ul className="flex items-center gap-7 xl:gap-10">
-              {NAV_SHEETS.map((sheet) => {
+              {sheets.map((sheet) => {
                 const active = pathname === sheet.href || pathname.startsWith(sheet.href + "/");
                 return (
                   <li key={sheet.key}>
@@ -249,7 +250,7 @@ export default function SiteHeader() {
           <div className="sheet relative flex h-full flex-col overflow-y-auto pt-28 pb-10">
             <nav aria-label="Primary" className="flex-1">
               <ul className="flex flex-col">
-                {NAV_SHEETS.map((sheet) => (
+                {sheets.map((sheet) => (
                   <li key={sheet.key} className="overflow-hidden border-b border-rule">
                     <TransitionLink
                       href={sheet.href}
