@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { posterUrl, runtime, videoUrl, type Video } from "@/lib/video";
+import { isPhone, phoneVideoUrl, posterUrl, runtime, videoUrl, type Video } from "@/lib/video";
 
 const two = (n: number) => String(n).padStart(2, "0");
 
@@ -86,6 +86,8 @@ function FilmViewer({
   onClose: () => void;
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  // Phones get the 480p copy: about half the data, and sharp enough on a small screen.
+  const [phone] = useState(isPhone);
   const count = videos.length;
   const current = videos[index];
   const go = (delta: number) => onChange((index + delta + count) % count);
@@ -131,7 +133,7 @@ function FilmViewer({
         <div className="relative min-h-0 flex-1 md:px-24">
           <video
             key={current.publicId}
-            src={videoUrl(current.publicId, current.compressed)}
+            src={phone ? phoneVideoUrl(current.publicId) : videoUrl(current.publicId, current.compressed)}
             poster={posterUrl(current.publicId)}
             controls
             autoPlay
