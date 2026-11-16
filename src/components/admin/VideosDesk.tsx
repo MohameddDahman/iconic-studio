@@ -63,7 +63,7 @@ const label = (job: Job) =>
 const megabytes = (bytes: number) => `${(bytes / 1_000_000).toFixed(1)} MB`;
 
 /**
- * Short films. Each clip is compressed to 720p on this computer before it is
+ * Short films. Each clip is compressed to 480p on this computer before it is
  * uploaded (compressVideo.ts), straight to Cloudinary with a signature from the
  * server, so the free plan's storage and downloads go a long way.
  */
@@ -169,13 +169,13 @@ export default function VideosDesk() {
       <DeskHeader
         sheet="X-925"
         title="Videos"
-        lead="Short films for the site. Each clip is shrunk to 720p on this computer before it uploads, so keep your full-size files somewhere safe."
+        lead="Short films for the site. Each clip is shrunk to 480p on this computer before it uploads, so keep your full-size files somewhere safe."
       />
 
       <div className="mb-8 flex flex-col gap-3">
         <div className="border border-dashed border-rule px-6 py-10 text-center">
           <p className="text-sm text-on-surface-muted">Choose one clip or several. Clips of a minute or less work best.</p>
-          <p className="annotation mt-2 text-on-surface-faint">MP4, MOV or WebM · shrunk to 720p automatically</p>
+          <p className="annotation mt-2 text-on-surface-faint">MP4, MOV or WebM · shrunk to 480p automatically</p>
           <input
             ref={picker}
             type="file"
@@ -258,7 +258,7 @@ export default function VideosDesk() {
                     ))}
                   </select>
                   <span className="annotation text-on-surface-faint tabular-nums">
-                    {runtime(row.duration)} · {megabytes(row.bytes)} · {row.compressed ? "720p" : "original"}
+                    {runtime(row.duration)} · {megabytes(row.bytes)} · {row.compressed ? "480p" : "original"}
                   </span>
                 </div>
               </div>

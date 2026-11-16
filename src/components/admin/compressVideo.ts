@@ -1,7 +1,7 @@
 /**
- * Make a clip small before it leaves the computer: 720p (the longer side at most
- * 1280px), H.264 at about 1.5 Mbit/s, with AAC sound. A 45-second phone clip of
- * 60-200 MB comes out at roughly 8 MB, and that is all that is stored and all a
+ * Make a clip small before it leaves the computer: 480p (the longer side at most
+ * 854px), H.264 at about 0.75 Mbit/s, with AAC sound. A 45-second phone clip of
+ * 60-200 MB comes out at roughly 5 MB, and that is all that is stored and all a
  * visitor downloads. Returns null when this browser cannot encode video; the
  * original is then uploaded and Cloudinary makes the small copy instead.
  */
@@ -12,7 +12,7 @@ export async function compressVideo(file: File, onProgress: (progress: number) =
   const input = new mb.Input({ formats: mb.ALL_FORMATS, source: new mb.BlobSource(file) });
   const track = await input.getPrimaryVideoTrack();
   if (!track) return null;
-  const scale = Math.min(1, 1280 / Math.max(track.displayWidth, track.displayHeight));
+  const scale = Math.min(1, 854 / Math.max(track.displayWidth, track.displayHeight));
   const even = (n: number) => Math.max(2, Math.round((n * scale) / 2) * 2);
 
   const output = new mb.Output({
@@ -27,7 +27,7 @@ export async function compressVideo(file: File, onProgress: (progress: number) =
       height: even(track.displayHeight),
       fit: "fill",
       codec: "avc",
-      bitrate: 1_500_000,
+      bitrate: 750_000,
     },
     audio: { codec: "aac", bitrate: 96_000 },
   });
