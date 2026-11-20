@@ -60,7 +60,7 @@ const snapshot = {
     return { ...rest, media: resolve(mediaId), mediaB: resolve(mediaBId) };
   }),
   testimonials: published(testimonials).map(strip),
-  videos: published(videos).map(({ _id, publicId, title, projectSlug, duration, width, height, compressed }) => ({ _id, publicId, title, projectSlug, duration, width, height, compressed })),
+  videos: published(videos).map(({ _id, publicId, title, projectSlug, duration, width, height, compressed, description }) => ({ _id, publicId, title, projectSlug, duration, width, height, compressed, description })),
   settings: settings[0] ? (({ _creationTime, ...s }) => (void _creationTime, s))(settings[0]) : null,
 };
 

@@ -111,6 +111,8 @@ export default defineSchema({
     bytes: v.number(),
     /** Compressed in the browser before upload, so the stored file is the web copy. */
     compressed: v.optional(v.boolean()),
+    /** What the film shows, in the studio's words — Arabic or English. */
+    description: v.optional(v.string()),
     published: v.boolean(),
     order: v.number(),
     createdAt: v.number(),

@@ -5,6 +5,7 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
 import MediaLibrary, { type MediaRow } from "./MediaLibrary";
+import CompletedCount from "./CompletedCount";
 import {
   Btn,
   Chip,
@@ -597,6 +598,10 @@ export default function ProjectsDesk() {
             New project
           </Btn>
         }
+      />
+
+      <CompletedCount
+        onSite={projects?.filter((project) => project.published && (project.cover ?? project.gallery[0])).length}
       />
 
       <div className="mb-6 flex flex-col gap-3 empty:hidden">

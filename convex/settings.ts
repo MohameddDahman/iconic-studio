@@ -98,6 +98,21 @@ export const save = mutation({
 });
 
 /**
+ * Only the count of finished projects, set from the desk's Projects screen —
+ * the rest of the settings are left alone. Null clears it.
+ */
+export const setCompletedProjects = mutation({
+  args: { count: v.union(v.number(), v.null()) },
+  handler: async (ctx, { count }) => {
+    await requireStudio(ctx);
+    const existing = await ctx.db.query("settings").first();
+    if (!existing) throw new ConvexError("Save the studio's Settings once first, then set the count here.");
+    await ctx.db.patch(existing._id, completedCount(count));
+    return existing._id;
+  },
+});
+
+/**
  * Only how the studio is reached — the name, tagline and introduction are left
  * alone. Internal, so only the CLI can call it:
  *   npx convex run settings:setContact '{ … }' [--prod]

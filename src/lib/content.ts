@@ -211,6 +211,7 @@ async function loadVideos(): Promise<Video[]> {
     width: Number(r.width ?? 0),
     height: Number(r.height ?? 0),
     compressed: Boolean(r.compressed),
+    description: r.description ? String(r.description) : undefined,
   }));
 }
 

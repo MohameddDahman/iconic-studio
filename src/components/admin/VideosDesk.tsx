@@ -6,7 +6,7 @@ import { useAuthToken } from "@convex-dev/auth/react";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
 import { compressVideo } from "./compressVideo";
-import { Btn, Chip, DeskHeader, Empty, Notice, inputClass, useRun } from "./ui";
+import { Btn, Chip, DeskHeader, Empty, Notice, inputClass, useLeaveWarning, useRun } from "./ui";
 import { posterUrl, runtime } from "@/lib/video";
 import { cn } from "@/lib/utils";
 
@@ -21,7 +21,46 @@ interface Row {
   duration: number;
   bytes: number;
   compressed?: boolean;
+  description?: string;
   published: boolean;
+}
+
+/** Room for a few paragraphs; the server keeps no more. */
+const DETAILS_MAX = 2000;
+
+/**
+ * The studio's notes on a film, shown with it on the site. Saved when the box
+ * loses focus, like the title; until then, leaving the desk asks first.
+ */
+function DetailsField({ saved, onSave }: { saved: string; onSave: (description: string) => void }) {
+  const [text, setText] = useState(saved);
+  // Take a newer saved version (from another tab, say) unless this box has edits of its own.
+  const [base, setBase] = useState(saved);
+  if (saved !== base) {
+    setBase(saved);
+    if (text.trim() === base) setText(saved);
+  }
+  const dirty = text.trim() !== saved;
+  useLeaveWarning(dirty);
+
+  return (
+    <div className="flex flex-col gap-1.5">
+      <textarea
+        aria-label="Details"
+        dir="auto"
+        rows={3}
+        maxLength={DETAILS_MAX}
+        placeholder="Details about the film: the project, the work it shows, the materials. Arabic or English. Shown with the film on the site."
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        onBlur={() => {
+          if (dirty) onSave(text.trim());
+        }}
+        className={inputClass}
+      />
+      {dirty && <p className="annotation text-on-surface-faint">Saves when you click outside the box</p>}
+    </div>
+  );
 }
 
 interface Job {
@@ -218,7 +257,7 @@ export default function VideosDesk() {
       {videos && videos.length > 0 && (
         <ul className="flex flex-col">
           {videos.map((row, i) => (
-            <li key={row._id} className="grid items-center gap-4 border-b border-rule py-4 sm:grid-cols-[10rem_1fr_auto]">
+            <li key={row._id} className="grid items-start gap-4 border-b border-rule py-4 sm:grid-cols-[10rem_1fr_auto]">
               <div className="relative aspect-video w-40 overflow-hidden border border-rule bg-surface-raised">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -261,6 +300,10 @@ export default function VideosDesk() {
                     {runtime(row.duration)} · {megabytes(row.bytes)} · {row.compressed ? "480p" : "original"}
                   </span>
                 </div>
+                <DetailsField
+                  saved={row.description ?? ""}
+                  onSave={(description) => void list.run(() => update({ id: row._id, description }))}
+                />
               </div>
 
               <div className="flex flex-wrap items-center gap-2">

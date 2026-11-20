@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { cn } from "@/lib/utils";
+import { cn, opensInArabic } from "@/lib/utils";
 import { posterUrl, runtime, videoUrl, type Video } from "@/lib/video";
 
 const two = (n: number) => String(n).padStart(2, "0");
@@ -57,6 +57,15 @@ export default function VideoGallery({
                 {video.projectTitle && (
                   <span className="annotation mt-1 block text-on-surface-faint">{video.projectTitle}</span>
                 )}
+                {video.description && (
+                  <span
+                    dir="auto"
+                    {...(opensInArabic(video.description) ? { lang: "ar" } : null)}
+                    className="mt-3 line-clamp-3 block text-sm text-on-surface-muted"
+                  >
+                    {video.description.replace(/\s+/g, " ").trim()}
+                  </span>
+                )}
                 <span className="sr-only">Play the film</span>
               </button>
             </li>
@@ -68,6 +77,28 @@ export default function VideoGallery({
         <FilmViewer videos={videos} index={open} onChange={setOpen} onClose={() => setOpen(null)} />
       )}
     </section>
+  );
+}
+
+/** The studio's notes on a film. Each paragraph reads in its own direction, so Arabic and English can sit together. */
+function FilmDetails({ text, className }: { text: string; className?: string }) {
+  const paragraphs = text
+    .split(/\n\s*\n/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
+  return (
+    <div className={className}>
+      {paragraphs.map((paragraph, i) => (
+        <p
+          key={i}
+          dir="auto"
+          {...(opensInArabic(paragraph) ? { lang: "ar" } : null)}
+          className="whitespace-pre-line"
+        >
+          {paragraph}
+        </p>
+      ))}
+    </div>
   );
 }
 
@@ -129,40 +160,54 @@ function FilmViewer({
           </button>
         </div>
 
-        <div className="relative min-h-0 flex-1 md:px-24">
-          <video
-            key={current.publicId}
-            src={videoUrl(current.publicId, current.compressed)}
-            poster={posterUrl(current.publicId)}
-            controls
-            autoPlay
-            playsInline
-            preload="metadata"
-            className="h-full w-full bg-night object-contain"
-          />
-          {count > 1 && (
-            <>
-              <button
-                type="button"
-                aria-label="Previous film"
-                onClick={() => go(-1)}
-                className={cn(roundButton, "absolute top-1/2 left-3 -translate-y-1/2 md:left-8")}
-              >
-                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="size-5 rotate-180">
-                  <path d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-              <button
-                type="button"
-                aria-label="Next film"
-                onClick={() => go(1)}
-                className={cn(roundButton, "absolute top-1/2 right-3 -translate-y-1/2 md:right-8")}
-              >
-                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="size-5">
-                  <path d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            </>
+        <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
+          <div className="relative min-h-0 flex-1 md:px-24">
+            <video
+              key={current.publicId}
+              src={videoUrl(current.publicId, current.compressed)}
+              poster={posterUrl(current.publicId)}
+              controls
+              autoPlay
+              playsInline
+              preload="metadata"
+              className="h-full w-full bg-night object-contain"
+            />
+            {count > 1 && (
+              <>
+                <button
+                  type="button"
+                  aria-label="Previous film"
+                  onClick={() => go(-1)}
+                  className={cn(roundButton, "absolute top-1/2 left-3 -translate-y-1/2 md:left-8")}
+                >
+                  <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="size-5 rotate-180">
+                    <path d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  aria-label="Next film"
+                  onClick={() => go(1)}
+                  className={cn(roundButton, "absolute top-1/2 right-3 -translate-y-1/2 md:right-8")}
+                >
+                  <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="size-5">
+                    <path d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </>
+            )}
+          </div>
+
+          {/* The studio's notes on the film: under it on a phone, beside it on a wide screen. */}
+          {current.description && (
+            <section
+              key={current.publicId}
+              aria-label="About this film"
+              className="max-h-[32dvh] shrink-0 overflow-y-auto border-t border-white/10 px-5 pt-4 md:px-8 lg:max-h-none lg:w-[24rem] lg:border-t-0 lg:border-l lg:py-6"
+            >
+              <p className="mb-3 text-lg leading-snug">{current.title}</p>
+              <FilmDetails text={current.description} className="flex flex-col gap-3 text-sm leading-relaxed text-bone/80" />
+            </section>
           )}
         </div>
         <div className="h-6 md:h-8" />

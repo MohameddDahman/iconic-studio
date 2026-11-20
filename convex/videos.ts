@@ -2,6 +2,9 @@ import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { clean, now, requireStudio } from "./lib";
 
+/** Room for a few paragraphs about a film; the desk's box stops at the same length. */
+const DETAILS_MAX = 2000;
+
 /** The films the site shows, in order. */
 export const listPublished = query({
   args: {},
@@ -12,7 +15,7 @@ export const listPublished = query({
       .collect();
     return docs
       .sort((a, b) => a.order - b.order)
-      .map(({ _id, publicId, title, projectSlug, duration, width, height, compressed }) => ({
+      .map(({ _id, publicId, title, projectSlug, duration, width, height, compressed, description }) => ({
         _id,
         publicId,
         title,
@@ -21,6 +24,7 @@ export const listPublished = query({
         width,
         height,
         compressed,
+        description,
       }));
   },
 });
@@ -65,14 +69,17 @@ export const update = mutation({
     /** An empty string takes the film off its project. */
     projectSlug: v.optional(v.string()),
     published: v.optional(v.boolean()),
+    /** An empty string clears the details. */
+    description: v.optional(v.string()),
   },
-  handler: async (ctx, { id, title, projectSlug, published }) => {
+  handler: async (ctx, { id, title, projectSlug, published, description }) => {
     await requireStudio(ctx);
     if (!(await ctx.db.get(id))) throw new ConvexError("That film no longer exists.");
     await ctx.db.patch(id, {
       ...(title !== undefined ? { title: clean(title, 120) || "Untitled film" } : {}),
       ...(projectSlug !== undefined ? { projectSlug: projectSlug || undefined } : {}),
       ...(published !== undefined ? { published } : {}),
+      ...(description !== undefined ? { description: clean(description, DETAILS_MAX) || undefined } : {}),
     });
   },
 });

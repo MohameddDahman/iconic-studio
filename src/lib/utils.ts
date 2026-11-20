@@ -5,6 +5,9 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+/** Whether a text opens in Arabic script, so it can take the Arabic face and run right to left. */
+export const opensInArabic = (text: string) => /^[^\p{L}]*\p{Script=Arabic}/u.test(text);
+
 /** Clamp a number into a range. */
 export const clamp = (v: number, min = 0, max = 1) => Math.min(max, Math.max(min, v));
 

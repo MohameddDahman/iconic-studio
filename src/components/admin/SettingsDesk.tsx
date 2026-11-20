@@ -13,8 +13,12 @@ type Added = "whatsapp" | "mapUrl" | "links" | "completedProjects";
 /** A row saved before WhatsApp, the map and the links existed has none of them. */
 type Saved = Omit<StudioSettings, Added> & Partial<Pick<StudioSettings, Added>>;
 
-/** The address and the count stay exactly as typed until they are saved. */
-type Draft = Omit<StudioSettings, "address" | "completedProjects"> & { address: string; completedProjects: string };
+/**
+ * The address stays exactly as typed — new lines and all — until it is saved.
+ * The count of completed projects is set on the Projects screen, and saving
+ * here leaves it as it is.
+ */
+type Draft = Omit<StudioSettings, "address" | "completedProjects"> & { address: string };
 
 const draftFrom = (settings: Saved): Draft => ({
   name: settings.name,
@@ -28,14 +32,7 @@ const draftFrom = (settings: Saved): Draft => ({
   instagramUrl: settings.instagramUrl,
   mapUrl: settings.mapUrl ?? "",
   links: (settings.links ?? []).map((link) => ({ label: link.label, url: link.url })),
-  completedProjects: settings.completedProjects ? String(settings.completedProjects) : "",
 });
-
-/** Empty clears the count; anything else goes to the server, which checks it is a whole number. */
-const countFrom = (typed: string) => {
-  const trimmed = typed.trim();
-  return trimmed ? Number(trimmed) : null;
-};
 
 export default function SettingsDesk() {
   const settings = useQuery(api.settings.get);
@@ -104,7 +101,6 @@ export default function SettingsDesk() {
                 .map((line) => line.trim())
                 .filter(Boolean),
               links: draft.links.filter((link) => link.label.trim() || link.url.trim()),
-              completedProjects: countFrom(draft.completedProjects),
             });
             setInitial(JSON.stringify(draft));
           });
@@ -119,21 +115,6 @@ export default function SettingsDesk() {
           </Field>
           <Field label="Introduction" className="sm:col-span-2" hint="Two sentences at most.">
             <textarea rows={3} className={inputClass} value={draft.intro} onChange={(e) => set("intro", e.target.value)} />
-          </Field>
-          <Field
-            label="Completed projects"
-            hint="Every project the studio has finished, including the ones not on the site. The home page shows it at the top, as 150+. Empty hides it."
-          >
-            <input
-              type="number"
-              inputMode="numeric"
-              min={0}
-              step={1}
-              placeholder="150"
-              className={inputClass}
-              value={draft.completedProjects}
-              onChange={(e) => set("completedProjects", e.target.value)}
-            />
           </Field>
         </Panel>
 

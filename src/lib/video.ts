@@ -36,4 +36,6 @@ export interface Video {
   width: number;
   height: number;
   compressed?: boolean;
+  /** What the film shows, as the studio wrote it. Blank lines separate paragraphs. */
+  description?: string;
 }
