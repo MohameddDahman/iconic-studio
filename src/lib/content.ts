@@ -234,6 +234,8 @@ async function loadSettings(): Promise<StudioSettings> {
     instagramUrl: String(r.instagramUrl),
     mapUrl: String(r.mapUrl ?? ""),
     links: (r.links ?? []) as StudioLink[],
+    completedProjects:
+      typeof r.completedProjects === "number" && r.completedProjects > 0 ? r.completedProjects : null,
   };
 }
 

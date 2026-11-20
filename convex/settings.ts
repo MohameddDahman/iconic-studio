@@ -56,15 +56,35 @@ function contact(args: ObjectType<typeof contactFields>) {
   return next;
 }
 
+/**
+ * The count of finished projects the home page shows. Null clears it; a desk
+ * opened before the field existed sends nothing, and the saved count is kept.
+ */
+function completedCount(value: number | null | undefined) {
+  if (value === undefined) return {};
+  if (value === null || value === 0) return { completedProjects: undefined };
+  if (!Number.isInteger(value) || value < 0 || value > 100_000) {
+    throw new ConvexError("Give the number of completed projects as a whole number, like 150.");
+  }
+  return { completedProjects: value };
+}
+
 export const save = mutation({
-  args: { name: v.string(), tagline: v.string(), intro: v.string(), ...contactFields },
-  handler: async (ctx, { name, tagline, intro, ...rest }) => {
+  args: {
+    name: v.string(),
+    tagline: v.string(),
+    intro: v.string(),
+    completedProjects: v.optional(v.union(v.number(), v.null())),
+    ...contactFields,
+  },
+  handler: async (ctx, { name, tagline, intro, completedProjects, ...rest }) => {
     await requireStudio(ctx);
     const next = {
       name: clean(name, 80),
       tagline: clean(tagline, 160),
       intro: clean(intro, 600),
       ...contact(rest),
+      ...completedCount(completedProjects),
     };
     if (!next.name) throw new ConvexError("The studio needs a name.");
 

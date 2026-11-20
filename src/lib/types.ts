@@ -128,4 +128,9 @@ export interface StudioSettings {
   mapUrl: string;
   /** Everywhere else the studio is online, in the order shown. */
   links: StudioLink[];
+  /**
+   * Every project the studio has finished, including the ones it keeps off the
+   * site. Null until the desk sets it; the home page then leaves it out.
+   */
+  completedProjects: number | null;
 }

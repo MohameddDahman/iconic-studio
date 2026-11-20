@@ -131,5 +131,7 @@ export default defineSchema({
     whatsapp: v.optional(v.string()),
     mapUrl: v.optional(v.string()),
     links: v.optional(v.array(v.object({ label: v.string(), url: v.string() }))),
+    /** Every project the studio has finished, shown on the home page — published or not. */
+    completedProjects: v.optional(v.number()),
   }),
 });

@@ -40,6 +40,7 @@ export const SEED_SETTINGS: StudioSettings = {
     { label: "LinkedIn", url: "https://www.linkedin.com/in/iconic-architecture-design-990322403" },
     { label: "Review us on Google", url: "https://g.page/r/CfWrGa57-KN0EBM/review" },
   ],
+  completedProjects: null,
 };
 
 export const SEED_PROJECTS: Project[] = [

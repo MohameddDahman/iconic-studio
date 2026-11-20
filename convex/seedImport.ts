@@ -199,7 +199,8 @@ export const apply = internalMutation({
       });
     }
 
-    await ctx.db.insert("settings", { ...SEED_SETTINGS });
+    // A count the placeholders leave unset is simply absent from the row.
+    await ctx.db.insert("settings", { ...SEED_SETTINGS, completedProjects: SEED_SETTINGS.completedProjects ?? undefined });
 
     return {
       media: mediaBySrc.size,

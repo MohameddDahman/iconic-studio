@@ -6,7 +6,8 @@ import FeaturedWork from "@/components/site/FeaturedWork";
 import ProcessSteps from "@/components/site/ProcessSteps";
 import MonographTeaser from "@/components/site/MonographTeaser";
 import { DISCIPLINES, STAGES } from "@/lib/practice";
-import { getFeaturedProjects, getProjects, getSpreads, getTestimonials } from "@/lib/content";
+import { getFeaturedProjects, getProjects, getSettings, getSpreads, getTestimonials } from "@/lib/content";
+import { socialProfiles } from "@/lib/social";
 import type { Project, Typology } from "@/lib/types";
 
 // Content is read from the data cache, refreshed when the desk saves (app/api/refresh); this is only a backstop.
@@ -43,11 +44,12 @@ const slideFor = (project: Project, src?: string): HeroSlide => ({
 });
 
 export default async function HomePage() {
-  const [projects, featured, testimonials, spreads] = await Promise.all([
+  const [projects, featured, testimonials, spreads, settings] = await Promise.all([
     getProjects(),
     getFeaturedProjects(6),
     getTestimonials(),
     getSpreads(),
+    getSettings(),
   ]);
 
   const preferred = HERO_PREFERENCE.flatMap(({ slug, src }) => {
@@ -75,6 +77,8 @@ export default async function HomePage() {
       <HeroCinema
         slides={slides}
         lead="An architecture, landscape and interior design studio in Alexandria — homes, workplaces, restaurants, hotels and clinics, from the first sketch to the final styling."
+        completed={settings.completedProjects}
+        socials={socialProfiles(settings)}
       />
       <IntroStatement
         statement="We design interiors where the light, the materials and the way you move through a room all agree — then our own team builds them, so the room you approved is exactly the room you walk into."

@@ -6,7 +6,9 @@ import { useGSAP } from "@gsap/react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import TransitionLink from "@/components/motion/TransitionLink";
 import Wordmark from "@/components/chrome/Wordmark";
+import SocialIcon from "@/components/site/SocialIcon";
 import { NAV_SHEETS, STUDIO } from "@/lib/routes";
+import type { SocialProfile } from "@/lib/social";
 import { cn } from "@/lib/utils";
 
 type Surface = "night" | "day";
@@ -28,7 +30,13 @@ function RollLabel({ children }: { children: string }) {
   );
 }
 
-export default function SiteHeader({ showVideos = false }: { showVideos?: boolean }) {
+export default function SiteHeader({
+  showVideos = false,
+  socials = [],
+}: {
+  showVideos?: boolean;
+  socials?: SocialProfile[];
+}) {
   const sheets = NAV_SHEETS.filter((sheet) => sheet.key !== "videos" || showVideos);
   const pathname = usePathname();
   const [surface, setSurface] = useState<Surface>("night");
@@ -267,14 +275,33 @@ export default function SiteHeader({ showVideos = false }: { showVideos?: boolea
             </nav>
 
             <div data-menu-item className="flex flex-wrap items-center justify-between gap-4 pt-10">
-              <a
-                href={STUDIO.instagramUrl}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="eyebrow inline-flex min-h-11 items-center text-on-surface-muted"
-              >
-                Instagram ↗
-              </a>
+              {socials.length > 0 ? (
+                <ul aria-label="The studio on social media" className="flex flex-wrap gap-2">
+                  {socials.map((profile) => (
+                    <li key={profile.platform}>
+                      <a
+                        href={profile.url}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        title={profile.name}
+                        className="flex size-11 items-center justify-center rounded-full border border-rule text-on-surface-muted transition-colors duration-500 ease-cut hover:border-accent hover:text-accent"
+                      >
+                        <SocialIcon platform={profile.platform} className="size-[1.125rem]" />
+                        <span className="sr-only">{profile.name}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <a
+                  href={STUDIO.instagramUrl}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="eyebrow inline-flex min-h-11 items-center text-on-surface-muted"
+                >
+                  Instagram ↗
+                </a>
+              )}
             </div>
           </div>
         </div>

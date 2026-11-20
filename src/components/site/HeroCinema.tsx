@@ -8,6 +8,8 @@ import TransitionLink from "@/components/motion/TransitionLink";
 import { cn } from "@/lib/utils";
 import type { Media } from "@/lib/types";
 import { STUDIO } from "@/lib/routes";
+import type { SocialProfile } from "@/lib/social";
+import SocialIcon from "./SocialIcon";
 import mark from "../../../public/brand/iconic-mark-hero.webp";
 
 export interface HeroSlide {
@@ -28,7 +30,18 @@ const WAITING = "inset(0% 0% 0% 100%)";
  * it holds — the grammar of a film title sequence rather than a carousel.
  * The reel pauses off screen and never runs under reduced motion.
  */
-export default function HeroCinema({ slides, lead }: { slides: HeroSlide[]; lead: string }) {
+export default function HeroCinema({
+  slides,
+  lead,
+  completed = null,
+  socials = [],
+}: {
+  slides: HeroSlide[];
+  lead: string;
+  /** Every project the studio has finished, published or not. Null leaves the count out. */
+  completed?: number | null;
+  socials?: SocialProfile[];
+}) {
   const rootRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -39,6 +52,7 @@ export default function HeroCinema({ slides, lead }: { slides: HeroSlide[]; lead
   const [index, setIndex] = useState(0);
   const [inView, setInView] = useState(true);
   const count = slides.length;
+  const rail = socials.length > 0;
 
   // A full-width photograph is the heaviest thing on the page, so only the one
   // on show and the one after it are fetched; the rest wait their turn.
@@ -79,6 +93,22 @@ export default function HeroCinema({ slides, lead }: { slides: HeroSlide[]; lead
           stagger: 0.1,
           delay: 1.55,
         });
+        // The studio's count runs up as it fades in, and lands on the number the page was served with.
+        const tallies = root.querySelectorAll<HTMLElement>("[data-hero-count]");
+        tallies.forEach((el) => {
+          const target = Number(el.dataset.heroCount);
+          const tally = { v: 0 };
+          el.textContent = "0";
+          gsap.to(tally, {
+            v: target,
+            duration: 2.2,
+            ease: "power2.out",
+            delay: 1.75,
+            onUpdate: () => {
+              el.textContent = Math.round(tally.v).toLocaleString("en-US");
+            },
+          });
+        });
         gsap.fromTo(
           root.querySelector("[data-slide='0'] [data-kb]"),
           { scale: 1.28 },
@@ -95,6 +125,12 @@ export default function HeroCinema({ slides, lead }: { slides: HeroSlide[]; lead
           ease: "none",
           scrollTrigger: { trigger: root, start: "top top", end: "75% top", scrub: true },
         });
+        return () => {
+          // Cut short, the count would otherwise stay wherever it had reached.
+          tallies.forEach((el) => {
+            el.textContent = Number(el.dataset.heroCount).toLocaleString("en-US");
+          });
+        };
       });
       return () => mm.revert();
     },
@@ -160,7 +196,9 @@ export default function HeroCinema({ slides, lead }: { slides: HeroSlide[]; lead
       data-surface="night"
       aria-roledescription="carousel"
       aria-label="Selected projects"
-      className="relative h-[100svh] min-h-[640px] overflow-hidden bg-night text-bone"
+      // A screen tall, unless the words need more: then it grows, rather than
+      // letting the top of the title slide under the header on a short phone.
+      className="relative flex min-h-[max(100svh,640px)] flex-col overflow-hidden bg-night text-bone"
     >
       <div ref={stageRef} className="absolute inset-0 will-change-transform">
         {slides.map((slide, i) => (
@@ -199,41 +237,93 @@ export default function HeroCinema({ slides, lead }: { slides: HeroSlide[]; lead
         />
       </div>
 
-      <div ref={contentRef} className="relative z-20 flex h-full flex-col justify-end">
+      <div ref={contentRef} className="relative z-20 flex flex-1 flex-col justify-end pt-24">
         <div className="sheet pb-8 md:pb-12">
-          <Image
-            src={mark}
-            alt={STUDIO.legalName}
-            data-hero-fade
-            preload
-            sizes="(min-width: 768px) 11rem, 30vw"
-            // Sized against the height as well, so the hero never grows past a short screen.
-            className="mb-5 h-[clamp(2.1rem,min(4.6vw,5.6vh),3.6rem)] w-auto md:mb-7"
-          />
+          <div className="relative">
+            <Image
+              src={mark}
+              alt={STUDIO.legalName}
+              data-hero-fade
+              preload
+              sizes="(min-width: 768px) 11rem, 30vw"
+              // Sized against the height as well, so the hero never grows past a short screen.
+              className="mb-5 h-[clamp(2.1rem,min(4.6vw,5.6vh),3.6rem)] w-auto md:mb-7"
+            />
 
-          <p data-hero-fade className="eyebrow mb-5 text-balance text-bone/70 md:mb-7">
-            Architecture Design&nbsp;· Landscape&nbsp;· Interior
-          </p>
+            <p data-hero-fade className="eyebrow mb-5 text-balance text-bone/70 md:mb-7">
+              Architecture Design&nbsp;· Landscape&nbsp;· Interior
+            </p>
 
-          <h1 className="text-[clamp(2.8rem,min(10vw,16vh),9rem)] leading-[0.86] tracking-[-0.025em]">
-            <span className="block overflow-hidden pb-[0.07em]">
-              <span data-hero-line className="condensed block font-[760] uppercase">
-                Your space
+            <h1 className="text-[clamp(2.8rem,min(10vw,16vh),9rem)] leading-[0.86] tracking-[-0.025em]">
+              <span className="block overflow-hidden pb-[0.07em]">
+                <span data-hero-line className="condensed block font-[760] uppercase">
+                  Your space
+                </span>
               </span>
-            </span>
-            <span className="block overflow-hidden pb-[0.16em]">
-              <span data-hero-line className="block">
-                <span className="condensed font-[760] uppercase">Our</span>{" "}
-                <span className="font-script text-glow">signature</span>
+              <span className="block overflow-hidden pb-[0.16em]">
+                <span data-hero-line className="block">
+                  <span className="condensed font-[760] uppercase">Our</span>{" "}
+                  <span className="font-script text-glow">signature</span>
+                </span>
               </span>
-            </span>
-          </h1>
+            </h1>
+
+            {/* The studio's record and where it posts, opposite the title. On a phone the
+                links run down the right edge, so the rule and the lead below stop short of
+                them. A screen too narrow for that keeps the title clear and leaves them to
+                the menu and the footer. */}
+            {(completed || rail) && (
+              <div
+                data-hero-fade
+                className="absolute -top-1 right-0 flex flex-col items-end gap-3 max-[22rem]:hidden md:top-0 md:items-stretch md:gap-4"
+              >
+                {completed ? (
+                  <p className="flex items-center gap-3 border border-white/15 bg-night/55 px-3 py-1 md:flex-col md:items-start md:gap-2 md:px-6 md:py-5">
+                    <span className="condensed text-[2rem] leading-none font-[760] tabular-nums md:text-[clamp(2.75rem,4.2vw,4.25rem)]">
+                      <span data-hero-count={completed}>{completed.toLocaleString("en-US")}</span>
+                      <span className="text-glow">+</span>
+                    </span>
+                    <span className="eyebrow max-w-[6.5rem] text-[0.625rem] leading-snug text-bone/75 md:max-w-none md:text-[0.6875rem]">
+                      Projects completed
+                    </span>
+                  </p>
+                ) : null}
+
+                {rail && (
+                  <ul
+                    aria-label="The studio on social media"
+                    className="flex flex-col gap-2 md:flex-row md:justify-end"
+                  >
+                    {socials.map((profile) => (
+                      <li key={profile.platform}>
+                        <a
+                          href={profile.url}
+                          target="_blank"
+                          rel="noreferrer noopener"
+                          title={profile.name}
+                          className="flex size-9 items-center justify-center rounded-full border border-white/20 bg-night/55 text-bone/85 transition-colors duration-500 ease-cut hover:border-glow hover:bg-glow hover:text-night focus-visible:border-glow focus-visible:bg-glow focus-visible:text-night lg:size-10"
+                        >
+                          <SocialIcon platform={profile.platform} className="size-4" />
+                          <span className="sr-only">{profile.name}</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
+          </div>
 
           <div
+            aria-hidden="true"
             data-hero-fade
-            className="mt-8 grid gap-8 border-t border-white/15 pt-6 md:mt-12 md:grid-cols-12 md:items-end md:gap-6"
-          >
-            <p className="max-w-md text-bone/75 md:col-span-5 lg:col-span-4">{lead}</p>
+            className={cn("mt-8 h-px bg-white/15 md:mt-12", rail && "min-[22rem]:max-md:mr-14")}
+          />
+
+          <div data-hero-fade className="grid gap-8 pt-6 md:grid-cols-12 md:items-end md:gap-6">
+            <p className={cn("max-w-md text-bone/75 md:col-span-5 lg:col-span-4", rail && "min-[22rem]:max-md:pr-14")}>
+              {lead}
+            </p>
 
             <div className="relative h-14 md:col-span-4 md:col-start-6 lg:col-start-6">
               {slides.map((slide, i) => (
