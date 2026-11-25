@@ -9,7 +9,7 @@ import { buildBook } from "@/lib/book";
 import copy from "@/lib/monograph-pdf.json";
 
 // Content is read from the data cache, refreshed when the desk saves (app/api/refresh); this is only a backstop.
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 /** The book as a PDF, printed from its own pages by scripts/build-monograph-pdf.mjs. */
 const COPY_HREF = "/monograph/iconic-volume-i.pdf";

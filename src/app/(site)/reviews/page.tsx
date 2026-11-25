@@ -7,7 +7,7 @@ import { Reveal } from "@/components/motion/Reveal";
 import { getTestimonials } from "@/lib/content";
 
 // Content is read from the data cache, refreshed when the desk saves (app/api/refresh); this is only a backstop.
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: "Client reviews",

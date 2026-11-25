@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { getProjects, getVideos } from "@/lib/content";
 import { SHEETS, SITE_URL } from "@/lib/routes";
 
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [projects, videos] = await Promise.all([getProjects(), getVideos()]);
